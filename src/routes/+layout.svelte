@@ -1,42 +1,73 @@
 <script>
-
+    
 </script>
 
 <nav>
-    <a href="/">My site</a>
+    <ul>
+        <li><a href="/">Build</a></li>
+        <li><a href="/">FAQ</a></li>
+        <li><a href="/"><img src="src/lib/img/negro300.png" alt="SANE"/></a></li>
+        <li><a href="/">Soporte</a></li>
+        <li><a href="/">Nosotros</a></li>
+    </ul>
 </nav>
 
 <main>
     <slot/>
 </main>
 
-<footer>Hola buenos dias</footer>
+<footer><img src="src/lib/img/negro300.png" alt="sane"/> SANE 2022</footer>
 
 <style>
     nav {
-        background-color: var(--dpurple);
-        display: block;
+        background-color: white;
+        display: flex;
         margin: 0 0;
         padding: 1em;
         text-decoration: none;
+        justify-items: center;
+        justify-content: center;
+    }
+
+    nav ul {
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 5px auto;
+    }
+
+    nav li {
+        margin: 0 20%;
+    }
+
+    img {
+        width: 65px;
     }
 
     a {
         text-decoration: none;
-        color: white;
+        color: var(--nblue);
+        font-size: 22px;
     }
 
     footer {
-        font-size: 20px;
+        font-size: 22px;
         display: block;
         margin: 0 auto;
         width: 100%;
         text-align: center;
-        background-color: var(--dpurple);
+        background-color: var(--nwhite);
+        color: black;
+        font-family: "Oswald";
+    }
+
+    footer img {
+        width: 20px;
     }
 
     :global(html) {
-        background-color: var(--mgray);
+        background-color: var(--dpurple);
         color: white;
         font-family: Poppins;
     }
@@ -51,12 +82,10 @@
         --blacktext: rgb(58,58,58)
     }
 
+
+
     :global(body) {
         margin: 0;
     }
 
-    main {
-        width: 100%;
-        margin: 1em 2em;
-    }
 </style>
