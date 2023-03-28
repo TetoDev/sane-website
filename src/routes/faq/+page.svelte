@@ -7,7 +7,7 @@
         font-family: "Oswald";
         text-transform: uppercase;
         display: block;
+        margin: 250px 50px;
     }
 
-    
 </style>
