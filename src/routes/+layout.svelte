@@ -3,14 +3,13 @@
 </script>
 
 <svelte:head>
-    <title>SANE BUILDS  |  Construye tu propio Gaming PC</title>
-    <html lang="es"/>
+    <title>SANE BUILDS | Construye tu GAMING PC optimizada a tu presupuesto</title>
 </svelte:head>
 
 <nav>
     <ul>
         <li><a href="/">Build</a></li>
-        <li><a href="/">FAQ</a></li>
+        <li><a href="/faq/">FAQ</a></li>
         <li><img src="src/lib/img/squareblanco.png" alt="SANE"></li>
         <li><a href="/">Soporte</a></li>
         <li><a href="/">Nosotros</a></li>
@@ -24,19 +23,25 @@
 <footer>
     <div id="wrapper">
         <div id="pages">
+            <p>Ir a</p>
             <a href="/">Build</a>
             <a href="/">FAQ</a>
             <a href="/">Soporte</a>
             <a href="/">Nosotros</a>
         </div>
+        <div id="mid-panel">
+            <img src="src/lib/img/nblue300.png" alt="sane">
+        </div>
         <div id="media">
+            <p>Redes Sociales</p>
             <a href="/">Instagram</a>
             <a href="/">Youtube</a>
             <a href="/">Twitter</a>
+            <a href="/">Linkedin</a>
         </div>
     </div>
     <div id="copyright">
-        Copyright <img src="src/lib/img/negro300.png" alt="sane"/> <p>SANE 2023</p> todos los derechos reservados.
+        Copyright <p>SANE 2023</p> todos los derechos reservados.
     </div>
 </footer>
 
@@ -47,6 +52,7 @@
         position: absolute;
         left: 50%;
         right: 50%;
+        top: 2%;
         padding: 1em;
         text-decoration: none;
         justify-items: center;
@@ -69,6 +75,11 @@
         padding: 3px 1.5vw;
     }
 
+    #mid-panel {
+        display: inline-block;
+        max-width: 190px;
+    }
+
     nav li a:hover {
         transition: 0.3s all ease;
         background-color: var(--eblue);
@@ -84,7 +95,13 @@
         color: white
     }
 
-    img {
+    #mid-panel img {
+        width: 100px;
+        display: block;
+        margin: 50px auto;
+    }
+
+    nav ul li img {
         width: 65px;
     }
 
@@ -99,25 +116,43 @@
         display: block;
         margin: 0 auto;
         width: 100%;
-        text-align: center;
         color: black;
+        text-align: center;
         background-color: white;
+    }
+
+    #pages, #media {
+        margin: 50px 10vw;
+        text-align: left;
+    }
+
+    #pages p, #media p {
+        color: var(--nblue);
+        font-size: 22px;
+        margin: 0;
+    }
+
+    #pages a, #media a {
+        font-size: 16px;
     }
 
     #copyright {
         font-family: "Poppins";
-        font-size: 22px;
+        font-size: 16px;
         text-align: center;
+        transform: translateX(-50px);
+        color: var(--nblue);
     }
 
     #copyright p {
         font-family: "Oswald";
         margin: 0;
         display: inline-block;
+        color: var(--nblue);
     }
 
     #pages a, #media a{
-        color: black;
+        color: var(--nblue);
         display: block;
         font-family: "Poppins";
     }
@@ -131,9 +166,9 @@
     }
 
     :global(html) {
-        background-color: var(--dpurple);
+        background-color: var(--nblue);
         color: white;
-        font-family: Poppins;
+        font-family: "Poppins";
     }
 
     :global(:root){
@@ -150,6 +185,7 @@
 
     :global(body) {
         margin: 0;
+        overflow-x: hidden;
     }
 
 </style>

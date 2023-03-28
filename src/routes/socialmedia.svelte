@@ -22,11 +22,19 @@
     }
     #wrapper div {
         text-align: center;
+        
     }
 
     #ig, #yt, #tw {
         margin: 0 50px;
         cursor: pointer;
+        padding: 8px;
+    }
+
+    #ig:hover, #yt:hover, #tw:hover {
+        transition: 0.3s all ease;
+        background-color: var(--eblue);
+        border-radius: 10px;
     }
 
     #ig {
@@ -42,7 +50,7 @@
     }
 
     p {
-        color: black;
+        color: var(--nblue);
         font-size: 30px;
         font-weight: bold;
         display: block;
