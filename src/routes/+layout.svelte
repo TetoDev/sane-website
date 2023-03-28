@@ -6,7 +6,7 @@
     <ul>
         <li><a href="/">Build</a></li>
         <li><a href="/">FAQ</a></li>
-        <li><a href="/"><img src="src/lib/img/negro300.png" alt="SANE"/></a></li>
+        <li><a href="/"><img src="src/lib/img/squareblanco.png" alt="SANE"/></a></li>
         <li><a href="/">Soporte</a></li>
         <li><a href="/">Nosotros</a></li>
     </ul>
@@ -16,13 +16,32 @@
     <slot/>
 </main>
 
-<footer><img src="src/lib/img/negro300.png" alt="sane"/> SANE 2022</footer>
+<footer>
+    <div id="wrapper">
+        <div id="pages">
+            <a href="/">Build</a>
+            <a href="/">FAQ</a>
+            <a href="/">Soporte</a>
+            <a href="/">Nosotros</a>
+        </div>
+        <div id="media">
+            <a href="/">Instagram</a>
+            <a href="/">Youtube</a>
+            <a href="/">Twitter</a>
+        </div>
+    </div>
+    <div id="copyright">
+        Copyright <img src="src/lib/img/negro300.png" alt="sane"/> <p>SANE 2023</p> todos los derechos reservados.
+    </div>
+</footer>
 
 <style>
     nav {
-        background-color: white;
         display: flex;
         margin: 0 0;
+        position: absolute;
+        left: 50%;
+        right: 50%;
         padding: 1em;
         text-decoration: none;
         justify-items: center;
@@ -47,7 +66,7 @@
 
     a {
         text-decoration: none;
-        color: var(--nblue);
+        color: white;
         font-size: 22px;
     }
 
@@ -57,9 +76,30 @@
         margin: 0 auto;
         width: 100%;
         text-align: center;
-        background-color: var(--nwhite);
         color: black;
+        background-color: white;
+    }
+
+    #copyright {
+        font-family: "Poppins";
+        font-size: 22px;
+        text-align: center;
+    }
+
+    #copyright p {
         font-family: "Oswald";
+        margin: 0;
+        display: inline-block;
+    }
+
+    #pages a, #media a{
+        color: black;
+        display: block;
+        font-family: "Poppins";
+    }
+
+    #pages, #media {
+        display: inline-block;
     }
 
     footer img {
@@ -78,7 +118,7 @@
         --mgray: rgb(44,53,57);
         --eblue: rgb(39,248,249);
         --dpurple: rgb(74,0,130);
-        --nwhite: rgb(240,240,240);
+        --nwhite: rgb(230,230,230);
         --blacktext: rgb(58,58,58)
     }
 

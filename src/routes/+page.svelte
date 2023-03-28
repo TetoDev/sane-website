@@ -4,14 +4,16 @@
     import Reviews from "./reviews.svelte";
     import Mission from "./mission.svelte";
     import Startnow from "./startnow.svelte";
+    import Socialmedia from "./socialmedia.svelte";
 </script>
 
 <Hero></Hero>
 <Popups></Popups>
 
 <div class="semi-bg1"></div>
-<div class="semi-bg2"></div>
-<Reviews></Reviews>
+<div class="semi-bg2"><Reviews></Reviews></div>
+
+<Socialmedia></Socialmedia>
 <Mission></Mission>
 <Startnow></Startnow>
 
@@ -20,7 +22,8 @@
         background-color: var(--nwhite);
         position: absolute;
         display: block;
-        width: 100vw;
+        max-width: 100vw;
+        min-width: 99vw;
         height: 400px;
         transform: translateY(-92%);
         z-index: -2;
@@ -28,12 +31,10 @@
     }
     .semi-bg2 {
         background-color: white;
-        position: absolute;
         display: block;
-        width: 100vw;
-        height: 900px;
-        transform: translateY(3.5%);
-        z-index: -2;
+        max-width: 100vw;
+        min-width: 99vw;
         overflow: hidden;
+        padding-bottom: 50px;
     }
 </style>

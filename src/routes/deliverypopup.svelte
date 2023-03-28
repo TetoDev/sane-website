@@ -5,7 +5,7 @@
 
 <style>
     div {
-        background-color: var(--mgray);
+        background-color: var(--nblue);
         min-width: 200px;
         max-width: 500px;
         min-height: 300px;

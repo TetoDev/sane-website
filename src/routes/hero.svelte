@@ -9,13 +9,14 @@
 
     #hero {
         display: inline-block;
-        margin: 0 0 0 100px;
+        margin: 0 0 150px 100px;
     }
     #first, #second {
         font-size: 80px;
         font-family: "Oswald";
         text-transform: uppercase;
         display: block;
+        text-shadow: 3px 3px #000000;
     }
 
     #first {
