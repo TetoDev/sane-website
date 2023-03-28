@@ -2,11 +2,16 @@
     
 </script>
 
+<svelte:head>
+    <title>SANE BUILDS  |  Construye tu propio Gaming PC</title>
+    <html lang="es"/>
+</svelte:head>
+
 <nav>
     <ul>
         <li><a href="/">Build</a></li>
         <li><a href="/">FAQ</a></li>
-        <li><a href="/"><img src="src/lib/img/squareblanco.png" alt="SANE"/></a></li>
+        <li><img src="src/lib/img/squareblanco.png" alt="SANE"></li>
         <li><a href="/">Soporte</a></li>
         <li><a href="/">Nosotros</a></li>
     </ul>
@@ -57,7 +62,26 @@
     }
 
     nav li {
-        margin: 0 20%;
+        margin: 0 2vw;
+    }
+
+    nav li a{
+        padding: 3px 1.5vw;
+    }
+
+    nav li a:hover {
+        transition: 0.3s all ease;
+        background-color: var(--eblue);
+        color: black;
+        border-radius: 10px;
+        
+    }
+
+    nav li a:active {
+        transition: 0.1s all ease;
+        background-color: var(--nblue);
+        border-radius: 10px;
+        color: white
     }
 
     img {

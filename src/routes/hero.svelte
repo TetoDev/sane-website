@@ -16,7 +16,7 @@
         font-family: "Oswald";
         text-transform: uppercase;
         display: block;
-        text-shadow: 3px 3px #000000;
+        text-shadow: 3px 3px var(--nblue);
     }
 
     #first {
@@ -44,13 +44,13 @@
     }
 
     button:hover, button:hover p {
-        transition: 0.2s all ease;
+        transition: 0.3s all ease;
         background-color: white;
         color: black;
     }
 
     button:active, button:active p {
-        transition: 0.2 all ease;
+        transition: 0.1 all ease;
         background-color: var(--nblue);
         color: white;
     }

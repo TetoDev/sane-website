@@ -42,6 +42,7 @@
         margin: 50px 0 50px 0;
         background-color: var(--dpurple);
         color: white;
+        cursor: pointer;
     }
 
     button:hover {

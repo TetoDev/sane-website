@@ -25,7 +25,8 @@
     }
 
     #ig, #yt, #tw {
-        margin: 0 50px
+        margin: 0 50px;
+        cursor: pointer;
     }
 
     #ig {

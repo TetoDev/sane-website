@@ -38,6 +38,10 @@
         font-size: 20px;
     }
 
+    .text {
+        font-style: italic;
+    }
+
     .review {
         background-color: var(--nblue);
         display: inline-block;

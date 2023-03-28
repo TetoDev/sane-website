@@ -32,7 +32,7 @@
 
         transform: translateY(22px);
 
-        text-shadow: 5px 5px #000000;
+        text-shadow: 3px 3px var(--nblue);
     }
 
     #highlight {
@@ -56,6 +56,7 @@
         text-transform: uppercase;
         font-family: "Oswald";
         text-shadow: 3px 3px var(--nblue);
+        max-height: 700px;
     }
 
 </style>
