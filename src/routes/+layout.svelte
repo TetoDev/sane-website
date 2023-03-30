@@ -8,11 +8,11 @@
 
 <nav>
     <ul>
-        <li><a href="/">Build</a></li>
+        <li><a href="/build/">Build</a></li>
         <li><a href="/faq/">FAQ</a></li>
         <li><img src="src/lib/img/squareblanco.png" alt="SANE"></li>
-        <li><a href="/">Soporte</a></li>
-        <li><a href="/">Nosotros</a></li>
+        <li><a href="/soporte/">Soporte</a></li>
+        <li><a href="/nosotros/">Nosotros</a></li>
     </ul>
 </nav>
 
@@ -24,10 +24,10 @@
     <div id="wrapper">
         <div id="pages">
             <p>Ir a</p>
-            <a href="/">Build</a>
-            <a href="/">FAQ</a>
-            <a href="/">Soporte</a>
-            <a href="/">Nosotros</a>
+            <a href="/build/">Build</a>
+            <a href="/faq/">FAQ</a>
+            <a href="/soporte/">Soporte</a>
+            <a href="/nosotros/">Nosotros</a>
         </div>
         <div id="mid-panel">
             <img src="src/lib/img/nblue300.png" alt="sane">
