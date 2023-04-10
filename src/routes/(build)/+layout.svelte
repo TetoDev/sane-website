@@ -1,22 +1,25 @@
 <script lang="ts">
     let stage = "Hola";
 </script>
-
-<div>
-    <a href="/">◀ Página principal</a>
-    <h1 class="shine">BUILD: {stage}</h1>
+<div id="wrapper">
+    <div>
+        <a href="/">◀ Página principal</a>
+        <h1 class="shine">BUILD: {stage}</h1>
+    </div>
+    
+    
+    <main>
+        <slot></slot>
+    </main>
 </div>
 
 
-<main>
-    <slot></slot>
-</main>
-
 
 <style>
-    :global(body), :global(html){
+    #wrapper {
         background-color: var(--eblue);
-        --text: rgba(20,20,20,0.2)
+        --text: rgba(20,20,20,0.2);
+        height: 100vh;
     }
 
     a {
