@@ -43,22 +43,23 @@ def getPage(category, sorter, page):
         
     else :
         # hdd
-        url = f"https://www.solotodo.cl/storage_drives?sizes=204422"
+        url = f"https://www.solotodo.cl/storage_drives?sizes=204422&page={page}"
         
     print(f"category: {category} | sorter: {sorter} | page: {page}")
     print(f"Going to {url}")
     return BeautifulSoup(requests.get(url).content, "html.parser")
 
-def getProducts (page):
-    products = {}
-    for product in page.find_all("button", class_="MuiButtonBase-root"): 
+def getProducts (category, sorter, page):
+    webpage = getPage(category, sorter, page)
+    products = []
+    for product in webpage.find_all("button", class_="MuiButtonBase-root"): 
         if '$' in product.text:
             
         
             specs = product.text.split("\n")
             first_line = specs[0].split("$")
         
-            name = re.sub(r"\([^)]*\)|\[[^]]*\]",'',first_line[0]).replace("Desktop",'').strip()
+            name = re.sub(r"\([^)]*\)|\[[^]]*\]",'',first_line[0]).replace("Desktop",'').replace("RGB Programable (ARGB / 3-pin / 5V)",'').strip()
             price = first_line[1].replace(".","")
             info = {}
             link = "https://www.solotodo.cl" + product.find_all("a")[0]['href']
@@ -68,7 +69,7 @@ def getProducts (page):
                     if len(spec.split(" ")) > 1:
                         info.update({"socket":spec.split(" ")[1]})
                     else :
-                        info.append({"socket":spec.replace("Socket", '')})
+                        info.update({"socket":spec.replace("Socket", '')})
                 
                 elif spec.startswith("Frecuencia"):
                     info.update({"frequency":spec.replace("Frecuencia",'')})
@@ -81,9 +82,36 @@ def getProducts (page):
                 
                 elif spec.startswith("Memoria"):
                     info.update({"vram":re.sub(r"\([^)]*\)|\[[^]]*\]",'',spec.replace("Memoria",''))})
+                
+                elif spec.startswith("Potencia"):
+                    info.update({"power":spec.replace("Potencia",'')})
+                
+                elif spec.startswith("Certificación"):
+                    info.update({"certification":spec.replace("Certificación",'')})
+                
+                elif spec.startswith("Chipset"):
+                    info.update({"chipset":re.sub(r"\([^)]*\)|\[[^]]*\]",'',spec.replace("Chipset",''))})
+                
+                elif spec.startswith("Memorias"):
+                    info.update({"memorySlots":spec.replace("Memorias",'')})
+                
+                elif spec.startswith("Formato"):
+                    info.update({"format":spec.replace("Formato",'')})
+                
+                elif spec.startswith("Altura"):
+                    info.update({"height":spec.replace("Altura",'')})
+
+                elif spec.startswith("Iluminación"):
+                    info.update({"lighting":spec.replace("Iluminación",'')})
+
+                elif spec.startswith("Panel lateral"):
+                    info.update({"panel":spec.replace("Panel lateral",'')})
+                
+                elif spec.startswith("Ventiladores incluidos"):
+                    info.update({"includedFans":specs[specs.index(spec)+1].replace("\t ",'')})
 
 
-            products.update({"name":name,"price":price,"info":info,"link":link})
+            products.append({"name":name,"price":price,"info":info,"link":link})
     
     
 
