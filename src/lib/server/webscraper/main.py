@@ -23,6 +23,9 @@ categories = {"graphicCards":["nvidia","amd"],
               "motherboards":["1200","1700","am4","am5"],
               "fans":["120","140"]}
 
+## Archive old listings
+mongodb.archiveOldProducts(categories)
+
 ## Searching for products
 
 db_dump = {}
