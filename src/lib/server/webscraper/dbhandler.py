@@ -37,6 +37,9 @@ class Connection () :
                 collection = db[sorter]
                 documents = list(collection.find())
 
+                if len(documents) == 0:
+                    break
+
                 archive_collection.insert_many(documents)
 
                 ## Deleting listings
