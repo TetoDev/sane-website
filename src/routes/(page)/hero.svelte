@@ -2,7 +2,7 @@
     <h1 id="first">La mejor gaming pc</h1>
     <h1 id="second">Optimizada a tu presupuesto</h1>
 </div>
-<button><p class="shine">BUILD</p></button>
+<a href="/build"><button><p class="shine">BUILD</p></button></a>
 
 
 <style>
@@ -38,8 +38,9 @@
         width: 225px;
         height: 100px;
         border: none;
-        margin: 100px 0 100px 450px;
-        transform: translateY(40%);
+        position: absolute;
+        left: 75%;
+        top: 60%;
         cursor: pointer;
     }
 

@@ -1,3 +1,7 @@
+<script lang="ts">
+    import Transition from "./transition.svelte";
+    import { page } from "$app/stores"
+</script>
 
 <nav>
     <ul>
@@ -10,7 +14,9 @@
 </nav>
 
 <main>
-    <slot/>
+    <Transition url={$page.url}>
+        <slot />
+    </Transition>
 </main>
 
 <footer>

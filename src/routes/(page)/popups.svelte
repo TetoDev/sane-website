@@ -10,11 +10,13 @@
         <Deliverypopup></Deliverypopup>
         <Performancepopup></Performancepopup>
     </div>
-    <button>Empieza aquí</button>
+    <a href="/build"><button>Empieza aquí</button></a>
 </div>
 
 
 <style>
+
+
 
     div div{
         display: block;

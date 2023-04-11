@@ -8,6 +8,7 @@ dotenv.config();
 type User = {
     name: string,
     phone: string,
+    email: string,
 }
 
 type Issue = {
@@ -91,10 +92,11 @@ export async function createConnection(){
     await mongodb.connect();
 }
 
-export function postIssue (name: string, phone: string, description:string, orderNumber?: string) {
+export function postIssue (name: string, phone: string, email:string, description:string, orderNumber?: string) {
     const user: User = {
         name,
-        phone
+        phone,
+        email
     }
     const issue: Issue = {
         time: Date.now(),

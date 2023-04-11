@@ -1,5 +1,4 @@
 
-
 <svelte:head>
     <title>SANE BUILDS | Construye tu GAMING PC optimizada a tu presupuesto</title>
 </svelte:head>

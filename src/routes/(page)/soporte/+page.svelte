@@ -34,6 +34,7 @@
 <div id="form-wrapper">
     <form method="POST" on:submit|preventDefault={submitIssue}>
         <input type="text" name="name" id="name" placeholder="Nombre Completo" required>
+        <input type="text" name="email" id="email" placeholder="Email" required>
         <input type="text" name="phone" id="phone" placeholder="Teléfono" required>
         <input type="text" name="order" id="order" placeholder="Número orden">
         <textarea name="description" id="description" placeholder="Describe tu problema." required/>
@@ -90,10 +91,16 @@
 
     #phone {
         display: inline-block;
+        width: 15%;
     }
 
     #order {
         display: inline-block;
+    }
+
+    #email {
+        display: inline-block;
+        width: 25%;
     }
 
     #description {

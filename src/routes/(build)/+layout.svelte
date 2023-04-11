@@ -1,4 +1,7 @@
 <script lang="ts">
+    import Buildtransition from "./buildtransition.svelte";
+    import {page} from "$app/stores";
+    
     let stage = "Hola";
 </script>
 <div id="wrapper">
@@ -9,7 +12,10 @@
     
     
     <main>
-        <slot></slot>
+        <Buildtransition url={$page.url}>
+            <slot></slot>
+        </Buildtransition>
+        
     </main>
 </div>
 

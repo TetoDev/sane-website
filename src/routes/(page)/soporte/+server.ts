@@ -11,6 +11,7 @@ export const POST: RequestHandler = async ({ request }) => {
     const formData = await request.formData();
     const name = String(formData.get('name'));
     const phone = String(formData.get('phone'));
+    const email = String(formData.get('email'));
     const orderNumber = String(formData.get('order'));
     const description = String(formData.get('description'));
 
@@ -24,7 +25,7 @@ export const POST: RequestHandler = async ({ request }) => {
     if (!description) data.errors.description = 'required';
     
 
-    postIssue(name,phone,description,orderNumber);
+    postIssue(name,phone,email,description,orderNumber);
     data.success = true;
     
     return json(data);
