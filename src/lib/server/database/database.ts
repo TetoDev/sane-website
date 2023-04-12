@@ -105,5 +105,5 @@ export function postIssue (name: string, phone: string, email:string, descriptio
         user,
     }
 
-    mongodb.writeDocument("issues","unsolved",issue);
+    mongodb.writeDocument("issues", "unsolved", issue).then(() => {console.log("New issue added to db: " + email + " for order " + orderNumber)});
 }

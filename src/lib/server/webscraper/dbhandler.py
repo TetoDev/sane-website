@@ -2,25 +2,26 @@ import pymongo
 from datetime import datetime
 import time
 
-class Connection () :
+
+class Connection:
 
     def __init__(self, url):
         self.client = pymongo.MongoClient(url)
         self.status_collection = self.client["status"]["statusData"]
 
-    def addProducts(self, products, database_name, collection_name):
+    def add_products(self, products, database_name, collection_name):
         db = self.client[database_name]
         collection = db[collection_name]
 
         collection.insert_many(products)
 
-    def updateStatus(self,status):
-        self.status_collection.insert_one({"status":status,"time":time.time()})
+    def update_status(self, status):
+        self.status_collection.insert_one({"status": status, "time": time.time()})
     
-    def archiveOldProducts(self, categories) :
+    def archive_old_products(self, categories):
         ## Marking the status as updating
         print("Updating database status: Updating")
-        self.updateStatus("updating")
+        self.update_status("updating")
 
         ## Creating archive collection in oldListings
         print("Creating new archive collection")
@@ -48,4 +49,4 @@ class Connection () :
 
         ## Updating the status to operational
         print("Updating database status: Operational")
-        self.updateStatus("operational")
+        self.update_status("operational")
