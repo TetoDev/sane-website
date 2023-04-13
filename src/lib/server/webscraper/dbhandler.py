@@ -8,20 +8,36 @@ class Connection:
     def __init__(self, url):
         self.client = pymongo.MongoClient(url)
         self.status_collection = self.client["status"]["statusData"]
+    
+    def is_operational(self):
+        current_status = self.status_collection.find().sort("time", -1).limit(1)[0]["status"]
+        if current_status == "operational":
+            return True
+        else:
+            return False
 
     def add_products(self, products, database_name, collection_name):
+        if self.is_operational():
+            raise Exception("Database is currently operational, unable to add products")
         db = self.client[database_name]
         collection = db[collection_name]
 
         collection.insert_many(products)
 
+    def remove_docs(self, database_name, collection_name):
+        if self.is_operational():
+            raise Exception("Database is currently operational, unable to remove docs")
+        db = self.client[database_name]
+        collection = db[collection_name]
+
+        collection.delete_many({})
+
     def update_status(self, status):
         self.status_collection.insert_one({"status": status, "time": time.time()})
     
     def archive_old_products(self, categories):
-        ## Marking the status as updating
-        print("Updating database status: Updating")
-        self.update_status("updating")
+        if self.is_operational():
+            raise Exception("Database is currently operational, unable to archive old listings")
 
         ## Creating archive collection in oldListings
         print("Creating new archive collection")
@@ -47,6 +63,4 @@ class Connection:
                 print("Deleting old entries")
                 collection.delete_many({})
 
-        ## Updating the status to operational
-        print("Updating database status: Operational")
-        self.update_status("operational")
+        

@@ -52,6 +52,9 @@
     {#if !($page.url.pathname === "/build")}
         <a id="back" href=".">Ir atrás</a>
     {/if}
+    <br>
+    <br>
+    <br>
 </div>
 
 
@@ -60,13 +63,13 @@
     #wrapper {
         --text: rgba(20,20,20,0.2);
         background-color: var(--eblue);
-        height: 100vh;
     }
+
 
     #back {
         float: right;
         margin-top: 1.5%;
-        margin-right: 12%;
+        margin-right: 8%;
     }
 
     a {
@@ -112,7 +115,7 @@
         100%{
             background-position: top right;
 
-            background-position: 1000px;
+            background-position: 1200px;
         }
     }
 </style>

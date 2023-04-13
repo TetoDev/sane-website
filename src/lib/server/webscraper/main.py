@@ -1,10 +1,11 @@
 import scraper
+from rankingscraper import get_rankings
 from dbhandler import Connection
 from dotenv import load_dotenv
 import os
 
 ## Loading env variable
-cf = load_dotenv("../../../../.env")
+load_dotenv("../../../../.env")
 
 ## Connecting to database
 print("Connecting to database...")
@@ -22,6 +23,10 @@ categories = {"graphicCards": ["nvidia", "amd"],
               "towers": ["mitx", "matx", "atx"],
               "motherboards": ["1200", "1700", "am4", "am5"],
               "fans": ["120", "140"]}
+
+## Marking the status as updating
+print("Updating database status: Updating")
+mongodb.update_status("updating")
 
 ## Archive old listings
 mongodb.archive_old_products(categories)
@@ -50,3 +55,16 @@ for category, products in db_dump.items():
     print(f"Write: {target[0]} {target[1]} {target[2]}")
     mongodb.add_products(products, target[0], target[1])
     print("Completed")
+
+## Scrape cpu/gpu rankings
+print("Scraping rankings...")
+for component in ["cpu","gpu"]:
+    mongodb.remove_docs("rankings", component)
+    rankings = get_rankings(component)
+    for ranking in rankings:
+        mongodb.add_products(ranking, "rankings",component)
+
+
+## Updating the status to operational
+print("Updating database status: Operational")
+mongodb.update_status("operational")

@@ -7,7 +7,6 @@
 {#key url}
 	<div
 		in:fly={{ opacity: 0, duration: 350}}
-		
 	>
 		<slot />
 	</div>

@@ -68,9 +68,11 @@ def get_products(category, sorter, page):
             for spec in specs:
                 if spec.startswith("Socket"):
                     if len(spec.split(" ")) > 1:
-                        info.update({"socket": spec.split(" ")[1]})
+                        socket = spec.split(" ")[1]
+                        info.update({"socket": socket})
                     else :
-                        info.update({"socket": spec.replace("Socket", '')})
+                        socket = spec.replace("Socket", '')
+                        info.update({"socket": socket})
                 
                 elif spec.startswith("Frecuencia"):
                     info.update({"frequency": spec.replace("Frecuencia", '')})
