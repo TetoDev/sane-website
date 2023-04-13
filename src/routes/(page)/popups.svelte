@@ -10,7 +10,7 @@
         <Deliverypopup></Deliverypopup>
         <Performancepopup></Performancepopup>
     </div>
-    <a href="/build"><button>Empieza aquí</button></a>
+    <a href="/build/mode"><button>Empieza aquí</button></a>
 </div>
 
 

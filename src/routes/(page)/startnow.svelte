@@ -3,7 +3,7 @@
         <h2>¿Qué esperas? ¡Cotiza ahora!</h2>
         <p>Sin dolores de cabeza, nuestro sistema te llevará de la mano para descubrir las mejores partes para tu futuro pc y al menor precio posible</p>
     </div>
-    <a href="/build"><button>Cotizar</button></a>
+    <a href="/build/mode"><button>Cotizar</button></a>
 </div>
 
 

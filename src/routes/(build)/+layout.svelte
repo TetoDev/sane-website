@@ -1,8 +1,38 @@
 <script lang="ts">
     import Buildtransition from "./buildtransition.svelte";
-    import {page} from "$app/stores";
+    import {navigating, page} from "$app/stores";
+
+    let stage = "MODO";
+
+    function updateHeader() {
+        switch ($page.url.pathname) {
+            case "/build/mode":
+                stage = "MODO";
+                break;
+            case "/build/mode/tiers":
+                stage = "ELIGE TU GAMA";
+                break;
+            case "/build/summary":
+                stage = "RESUMEN";
+                break;
+            case "/build/mode/games":
+                stage = "ELIGE TUS JUEGOS";
+                break;
+            case "/build":
+                stage = "COMIENZA AHORA";
+                break;
+            default:
+                stage = "ESCOGE";
+                break;
+        }
+    }
+
+    $: if ($navigating == null) {
+        updateHeader();
+    }
     
-    let stage = "Hola";
+
+    
 </script>
 <div id="wrapper">
     <div>
@@ -17,15 +47,26 @@
         </Buildtransition>
         
     </main>
+
+
+    {#if !($page.url.pathname === "/build")}
+        <a id="back" href=".">Ir atrás</a>
+    {/if}
 </div>
 
 
 
 <style>
     #wrapper {
-        background-color: var(--eblue);
         --text: rgba(20,20,20,0.2);
+        background-color: var(--eblue);
         height: 100vh;
+    }
+
+    #back {
+        float: right;
+        margin-top: 1.5%;
+        margin-right: 12%;
     }
 
     a {
@@ -52,7 +93,7 @@
 	    position: relative;
         background: #262626 -webkit-gradient(linear, left top, right top, from(var(--nwhite)), to(var(--nwhite)),color-stop(0.5,#fff)) 0 0 no-repeat;
         background-size: 20px;
-        color: var(--text);
+        color: rgba(10,25,47,0.6);
         -webkit-background-clip: text;
         background-clip: text;
         animation: shining 3s infinite;

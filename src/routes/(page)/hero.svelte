@@ -2,7 +2,7 @@
     <h1 id="first">La mejor gaming pc</h1>
     <h1 id="second">Optimizada a tu presupuesto</h1>
 </div>
-<a href="/build"><button><p class="shine">BUILD</p></button></a>
+<a href="/build/mode"><button><p class="shine">BUILD</p></button></a>
 
 
 <style>

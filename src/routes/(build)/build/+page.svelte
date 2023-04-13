@@ -1,44 +1,36 @@
 <script lang="ts">
-    import Mode from "./mode.svelte";
-    import Tierselector from "./tierselector.svelte";
-    import Gameselector from "./gameselector.svelte";
-
-
-    let stages: boolean[] = [true,false];
-    let showTierSelector = false;
-
-    function back() {
-        if (stages[1]) {
-            stages[1] = false;
-            stages[0] = true;
-        }
-        if (stages[2]) {
-            stages[2] = false;
-            stages[1] = true;
-        }
-        if (showTierSelector) {
-            showTierSelector = false;
-            stages[0] = true;
-        }
-    }
-    function modeSelector(event: any) {
-        stages[0] = false;
-        showTierSelector = event.detail.state;
-        stages[1] = !event.detail.state;
-    }
 
 </script>
+<div>
+    <a href="build/mode">¡Comienza a construir!</a>
+</div>
 
-{#if stages[0]}
-    <Mode on:mode={modeSelector}></Mode>
-{/if}
-{#if showTierSelector}
-    <Tierselector></Tierselector>
-{/if}
-{#if stages[1]}
-    <Gameselector></Gameselector>
-{/if}
 
-{#if !stages[0]}
-    <button on:click={back}>Back</button>
-{/if}
+
+
+<style>
+    div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 50vh;
+    }
+    a {
+        transition: all 0.2s ease;
+        text-decoration: none;
+        color: white;
+        font-size: 60px;
+        margin: 0;
+        font-weight: bold;
+        background-color: var(--dpurple);
+        padding: 20px 40px;
+        border-radius: 30px;
+    }
+
+    a:hover {
+        transition: all 0.2s ease;
+        color: black;
+        scale: 1.2;
+        background-color: var(--eblue);
+    }
+</style>

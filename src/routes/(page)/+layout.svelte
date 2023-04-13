@@ -5,7 +5,7 @@
 
 <nav>
     <ul>
-        <li><a class="nav-button" href="/build/">Build</a></li>
+        <li><a class="nav-button" href="/build/mode">Build</a></li>
         <li><a class="nav-button" href="/faq/">FAQ</a></li>
         <li><a href="/"><img src="src/lib/img/squareblanco.png" alt="SANE"></a></li>
         <li><a class="nav-button" href="/soporte/">Soporte</a></li>
