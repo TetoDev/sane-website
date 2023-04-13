@@ -70,7 +70,7 @@ def get_products(category, sorter, page):
                     if len(spec.split(" ")) > 1:
                         socket = spec.split(" ")[1]
                         info.update({"socket": socket})
-                    else :
+                    else:
                         socket = spec.replace("Socket", '')
                         info.update({"socket": socket})
                 

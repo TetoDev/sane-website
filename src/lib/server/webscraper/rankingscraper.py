@@ -34,4 +34,5 @@ def get_rankings(component: str):
     
     return components
 
+
 get_rankings("cpu")
