@@ -31,6 +31,14 @@ class Connection:
         collection = db[collection_name]
 
         collection.delete_many({})
+    
+    def getProductFromRanking(self, component, name):
+        if self.is_operational():
+            raise Exception("Database is currently operational, unable to remove docs")
+        db = self.client["rankings"]
+        collection = db[component]
+
+        return collection.find_one({"name": name})
 
     def update_status(self, status):
         self.status_collection.insert_one({"status": status, "time": time.time()})

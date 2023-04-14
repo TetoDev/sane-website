@@ -1,8 +1,10 @@
 <script lang="ts">
+    import Loadingscreen from "../../../loadingscreen.svelte";
 
     let selectedButton = "";
     let errorMessage = "";
     let pricePlaceholder = "Selecciona una gama";
+    let loadingScreen = false;
 
     let lowButton: HTMLElement;
     let mediumButton: HTMLElement;
@@ -48,15 +50,66 @@
         selectedButton = tier;
     }
 
-    function onFormSubmit() {
+    async function onFormSubmit(event: Event) {
+        const formElement = event.target as HTMLFormElement;
+        const data = new FormData(formElement);
+
         if (selectedButton === "") {
             errorMessage = "Por favor, seleccione una gama de PC";
             return;
         }
+        if (data.get("looks") === "") {
+            errorMessage = "Por favor, seleccione su preferencia de diseño";
+            return;
+        }
+        if (data.get("budget") === "") {
+            errorMessage = "Por favor, seleccione su presupuesto";
+            return;
+        }
+        if (data.get("size") === "") {
+            errorMessage = "Por favor, seleccione el tamaño de su PC";
+            return;
+        }
+
+    const budget = parseInt((data.get("budget") as string).replace(/\.,/g, ""));
+
+        if (selectedButton === "low") {
+            if (budget <= 400000 || budget >= 800000) {
+                errorMessage = "Por favor, seleccione un presupuesto dentro de la gama baja (400.000 - 800.000)";
+                return;
+            }
+        }
+        if (selectedButton === "medium") {
+            if (budget <= 800000 || budget >= 1500000) {
+                errorMessage = "Por favor, seleccione un presupuesto dentro de la gama media  (800.000 - 1.500.000)";
+                return;
+            }
+        }
+        if (selectedButton === "high") {
+            if (budget <= 1500000 || budget >= 2500000) {
+                errorMessage = "Por favor, seleccione un presupuesto dentro de la gama alta (1.500.000 - 2.500.000)";
+                return;
+            }
+        }
+        loadingScreen = true;
+        const response = await fetch(formElement.action, {
+            method: formElement.method,
+            body: JSON.stringify({
+                tier: selectedButton,
+                looks: data.get("looks"),
+                size: data.get("size"),
+                budget: budget
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
     }
 </script>
 
-
+{#if loadingScreen}
+    <Loadingscreen text="Generando PCs..."></Loadingscreen>
+{/if}
 <div class="page-wrapper">
     <div class="button-wrapper">
         <button class="selected" bind:this={lowButton} on:click|preventDefault={() => {selectButton("low")}}>
@@ -96,8 +149,8 @@
             <option value="matx">Mediano</option>
             <option value="mitx">Muy pequeño (Más caro)</option>
         </select>
-        <label for="price">Precio de preferencia</label>
-        <input id="price" name="price-preference" type="text" placeholder={pricePlaceholder}>
+        <label for="budget">Precio de preferencia</label>
+        <input id="budget" name="budget" type="text" placeholder={pricePlaceholder}>
         <button type="submit">Generar PC</button>
     </form>
     {#if errorMessage !== ""}
@@ -182,6 +235,8 @@
 
     #error-message {
         color: red;
+        font-size: 25px;
+        font-weight: bold;
     }
 
     .button-wrapper button img, .button-wrapper button h2, .button-wrapper button p {

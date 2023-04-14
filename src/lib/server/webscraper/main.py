@@ -45,6 +45,10 @@ for category, sorters in categories.items():
                 print("LAST PAGE FOUND, JUMPING TO NEXT ITEM")
                 break
 
+            if (category == "cpu" or category == "graphicCards"):
+                for product in products:
+                    product.update({"score":mongodb.getProductFromRanking("gpu" if category == "graphicCards" else "cpu", product.get("name")).get("score")}) ## FIX THIS
+
             db_dump.update({f"{category} {sorter} {str(page)}": products})
             page = page + 1
 

@@ -13,6 +13,8 @@ def scrape_items(page: BeautifulSoup, component: str):
         elif component == "gpu":
             if ("Vega" in name) or ("TITAN" in name) or ("Tesla" in name) or ("Quadro" in name) or ("Max-Q" in name) or ("Mobile" in name) or ("Ryzen" in name) or ("Arc" in name) or ("Intel" in name) or ("GRID" in name) or ("FirePro" in name) or ("laptop" in name.lower()):
                 continue
+        if "@" in name:
+            name = name.split("@")[0].strip()
         score = item.find("span", class_="count").text
         score = score.replace(",", "").replace(".", "")
         score = int(score)
