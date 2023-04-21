@@ -54,7 +54,7 @@
     }
 
     button:active {
-        transition: 0.2 all ease;
+        transition: all ease 0.2s;
         background-color: var(--nblue);
         color: white;
     }

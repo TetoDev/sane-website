@@ -164,7 +164,7 @@
     form {
         display: flex;
         flex-direction: column;
-        align-items: left;
+        align-items: start;
         width: 95%;
         margin: 10px 0;
     }
@@ -203,7 +203,7 @@
     }
 
     form button:active {
-        transition: 0.2 all ease;
+        transition: 0.2s all ease;
         background-color: var(--nblue);
         color: white;
     }
@@ -244,7 +244,7 @@
     }
 
     .button-wrapper button {
-        transition: all 0.2 ease;
+        transition: all 0.2s ease;
         text-align: left;
         display: block;
         width: 100%;

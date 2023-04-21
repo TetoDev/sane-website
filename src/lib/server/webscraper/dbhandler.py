@@ -39,6 +39,22 @@ class Connection:
         collection = db[component]
 
         return collection.find_one({"name": name})
+    
+    def get_rankings(self, component):
+        if self.is_operational():
+            raise Exception("Database is currently operational, unable to remove docs")
+        db = self.client["rankings"]
+        collection = db[component]
+
+        return list(collection.find())
+    
+    def get_products_by_regex(self, category, sorter, regex):
+        if self.is_operational():
+            raise Exception("Database is currently operational, unable to remove docs")
+        db = self.client[category]
+        collection = db[sorter]
+
+        return list(collection.find({"name": {"$regex": regex}}))
 
     def update_status(self, status):
         self.status_collection.insert_one({"status": status, "time": time.time()})

@@ -9,7 +9,7 @@ def get_page(category, sorter, page):
         sub_url = "brands=106382" if sorter == "intel" else "brands=106379"
         url = f"https://www.solotodo.cl/processors?{sub_url}&page={page}"
             
-    elif category == "graphicCards":
+    elif category == "gpu":
         sub_url = "gpu_families=106058" if sorter == "nvidia" else "gpu_families=106049"
         url = f"https://www.solotodo.cl/video_cards?{sub_url}&page={page}"
 
@@ -60,7 +60,13 @@ def get_products(category, sorter, page):
         
             name = re.sub(r"\([^)]*\)|\[[^]]*\]", '', first_line[0]).replace("Desktop", '').replace("RGB Programable "
                                                                                                     "(ARGB / 3-pin / "
-                                                                                                    "5V)", '').strip()
+                                                                                                    "5V)", '').replace("-", " ").strip()
+            if category == "gpu" and sorter == "nvidia":
+                if name.startswith("ASUS"):
+                    sections = name.split(" ")
+                    sections[2] = sections[2].replace("S", "SUPER")
+                    name = " ".join(sections)
+                    
             price = first_line[1].replace(".", "")
             info = {}
             link = "https://www.solotodo.cl" + product.find_all("a")[0]['href']
@@ -113,6 +119,6 @@ def get_products(category, sorter, page):
                 elif spec.startswith("Ventiladores incluidos"):
                     info.update({"includedFans": specs[specs.index(spec)+1].replace("\t ", '')})
 
-            products.append({"name": name, "price": price, "info": info, "link": link})
+            products.append({"name": name, "price": price, "info": info, "link": link, "category": category, "score": 0})
     
     return products

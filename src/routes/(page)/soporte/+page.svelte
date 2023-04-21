@@ -37,7 +37,7 @@
         <input type="text" name="email" id="email" placeholder="Email" required>
         <input type="text" name="phone" id="phone" placeholder="Teléfono" required>
         <input type="text" name="order" id="order" placeholder="Número orden">
-        <textarea name="description" id="description" placeholder="Describe tu problema." required/>
+        <textarea name="description" id="description" placeholder="Describe tu problema." required></textarea>
         <button type="submit">Enviar</button>
     </form>
 </div>
@@ -138,7 +138,7 @@
     }
 
     button:active {
-        transition: 0.2 all ease;
+        transition: 0.2s all ease;
         background-color: var(--nblue);
         color: white;
     }
