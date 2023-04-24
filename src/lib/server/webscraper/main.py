@@ -1,11 +1,7 @@
 import scraper
 from rankingscraper import get_rankings
 from dbhandler import Connection
-from dotenv import load_dotenv
-import os
 
-## Loading env variable
-load_dotenv(".env")
 
 ## Defining product categories
 categories = {"gpu": ["nvidia", "amd"],
@@ -65,21 +61,21 @@ for component, ranking in rankings.items():
 
 ## Connecting to database
 print("Connecting to database...")
-mongodb = Connection(os.getenv("DB_CONN"))
+db = Connection()
 print("Connected to mongodb successfully!")
 
 ## Marking the status as updating
 print("Updating database status: Updating")
-mongodb.update_status("updating")
+db.update_status("updating")
 
 ## Archive old listings
-mongodb.archive_old_products(categories)
+db.archive_old_products(categories)
 
 ## Removing and writing new rankings to database
-mongodb.remove_docs("rankings", component)
+db.remove_docs("rankings", component)
 for component, ranking in rankings.items():
     for ls in ranking:
-        mongodb.add_products(ls, "rankings", component)
+        db.add_entries(ls, "rankings", component)
 
 
 ## Writing products to database
@@ -88,11 +84,11 @@ for category, products in db_dump.items():
     target = category.split(" ")
 
     print(f"Write: {target[0]} {target[1]}")
-    mongodb.add_products(products, target[0], target[1])
+    db.add_entries(products, target[0], target[1])
     print("Completed")
 
 ## Updating the status to operational
 print("Updating database status: Operational")
-mongodb.update_status("operational")
+db.update_status("operational")
 
-mongodb.disconnect()
+db.disconnect()
