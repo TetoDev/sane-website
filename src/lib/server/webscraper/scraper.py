@@ -99,7 +99,7 @@ def get_products(category, sorter, page):
                     info.update({"certification": spec.replace("Certificación", '')})
                 
                 elif spec.startswith("Chipset"):
-                    info.update({"chipset": re.sub(r"\([^)]*\)|\[[^]]*\]", '', spec.replace("Chipset", ''))})
+                    info.update({"chipset": re.sub(r"\([^)]*\)|\[[^]]*\]", '', spec.replace("Chipset", '').strip())})
                 
                 elif spec.startswith("Memorias"):
                     info.update({"memorySlots": spec.replace("Memorias", '')})
@@ -119,6 +119,9 @@ def get_products(category, sorter, page):
                 elif spec.startswith("Ventiladores incluidos"):
                     info.update({"includedFans": specs[specs.index(spec)+1].replace("\t ", '')})
 
-            products.append({"name": name, "price": price, "info": info, "link": link, "category": category, "score": 0})
+            if category == "cpu" or category == "gpu":
+                products.append({"name": name, "price": price, "info": info, "link": link, "category": category, "score": 0})
+            else :
+                products.append({"name": name, "price": price, "info": info, "link": link, "category": category})
     
     return products

@@ -5,12 +5,13 @@ import time
 
 class Connection:
 
-    def __init__(self, url):
-        self.client = pymongo.MongoClient(url)
-        self.status_collection = self.client["status"]["statusData"]
+    def __init__(self, key):
+        self.client = pymongo.MongoClient(key)
     
     def is_operational(self):
-        current_status = self.status_collection.find().sort("time", -1).limit(1)[0]["status"]
+
+        current_status = self.client["status"].find().sort("time", -1).limit(1)[0].get("status")
+
         if current_status == "operational":
             return True
         else:
@@ -86,5 +87,8 @@ class Connection:
                 ## Deleting listings
                 print("Deleting old entries")
                 collection.delete_many({})
+
+    def disconnect (self):
+        self.client.close()
 
         

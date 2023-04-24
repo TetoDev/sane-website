@@ -92,18 +92,23 @@
             }
         }
         loadingScreen = true;
+
+        const looks = data.get("looks") === "yes";
+        const size = data.get("size") as string;
         const response = await fetch(formElement.action, {
-            method: formElement.method,
+            method: "POST",
             body: JSON.stringify({
                 tier: selectedButton,
-                looks: data.get("looks"),
-                size: data.get("size"),
+                looks: looks,
+                size: size,
                 budget: budget
             }),
             headers: {
-                'Content-Type': 'application/json'
+                "Content-Type": "application/json"
             }
         });
+
+        console.log("Response: ", response);
     }
 </script>
 

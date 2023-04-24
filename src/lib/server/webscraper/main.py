@@ -5,12 +5,7 @@ from dotenv import load_dotenv
 import os
 
 ## Loading env variable
-load_dotenv("../../../../.env")
-
-## Connecting to database
-print("Connecting to database...")
-mongodb = Connection(os.getenv("DB_CONN"))
-print("Connected to mongodb successfully!")
+load_dotenv(".env")
 
 ## Defining product categories
 categories = {"gpu": ["nvidia", "amd"],
@@ -68,6 +63,11 @@ for component, ranking in rankings.items():
                             product.update({"score": item.get("score")})
         
 
+## Connecting to database
+print("Connecting to database...")
+mongodb = Connection(os.getenv("DB_CONN"))
+print("Connected to mongodb successfully!")
+
 ## Marking the status as updating
 print("Updating database status: Updating")
 mongodb.update_status("updating")
@@ -94,3 +94,5 @@ for category, products in db_dump.items():
 ## Updating the status to operational
 print("Updating database status: Operational")
 mongodb.update_status("operational")
+
+mongodb.disconnect()
