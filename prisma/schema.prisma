@@ -48,24 +48,25 @@ model gpu {
 }
 
 model ram {
-  id       Int    @id @default(autoincrement())
+  id       Int     @id @default(autoincrement())
   name     String
-  price    Int    @default(0)
-  type     String
-  speed    Int    @default(0)
-  dims     Int    @default(1)
-  capacity Int    @default(0)
+  price    Int     @default(0)
+  ddr5     Boolean @default(false)
+  speed    Int     @default(0)
+  dims     Int     @default(1)
+  capacity Int     @default(0)
   link     String
 }
 
 model motherboard {
-  id          Int    @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   name        String
-  price       Int    @default(0)
+  price       Int     @default(0)
   chipsetid   Int
   socketid    Int
   format      String
-  memoryslots Int    @default(2)
+  memoryslots Int     @default(2)
+  ddr5        Boolean @default(false)
   link        String
 }
 
@@ -83,6 +84,7 @@ model ssd {
   price    Int    @default(0)
   capacity Int    @default(0)
   bus      String
+  format   String
   link     String
 }
 

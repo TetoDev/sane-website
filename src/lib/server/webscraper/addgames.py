@@ -58,7 +58,7 @@ battlefield2042 = Game("Battlefield 2042", "AMD Ryzen 7 2700X", "Nvidia GeForce 
 battlefield1 = Game("Battlefield 1", "AMD FX-8350", "NVIDIA GeForce GTX 1060", 16, 50, "")
 gta5 = Game("Grand Theft Auto V", "AMD FX-8350", "GeForce GTX 660", 8, 90, "")
 
-conn.remove_docs("games", "gameRequirements")
+conn.drop_rows("games", "gameRequirements")
 conn.add_entries(game_documents, "games", "gameRequirements")
 
 conn.update_status("operational")
