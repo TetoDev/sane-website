@@ -104,13 +104,11 @@ class Connection:
                 info = entry.get("info")
                 socket_id = self.socket_ids.get(info.get("socket").upper()) if self.socket_ids.get(info.get("socket").upper()) is not None else 0
                 inputs.append((entry.get("name"), entry.get("price"), socket_id, entry.get("score"), info.get("generation"), entry.get("link")))
-                self.write_to_database("cpu", inputs)
 
         elif entry_type == "gpu":
             for entry in entries:
                 info = entry.get("info")
                 inputs.append((entry.get("name"), entry.get("price"), info.get("bus"), info.get("vram"), entry.get("score"), entry.get("link")))
-                self.write_to_database("gpu", inputs)
 
         elif entry_type == "motherboard":
             for entry in entries:
@@ -119,65 +117,55 @@ class Connection:
                     info.get("socket").upper()) is not None else 0
                 chipset_id = self.chipset_ids.get(info.get("chipset").lower()) if self.chipset_ids.get(info.get("chipset").lower()) is not None else 0
                 inputs.append((entry.get("name"), entry.get("price"), chipset_id, socket_id, info.get("format"), entry.get("link"), info.get("memoryslots"), info.get("ddr5")))
-                self.write_to_database("motherboard", inputs)
 
         elif entry_type == "ram":
             for entry in entries:
                 info = entry.get("info")
                 inputs.append((entry.get("name"), entry.get("price"), info.get("speed"), info.get("dims"), info.get("capacity"), entry.get("link"), info.get("ddr5")))
-                self.write_to_database("ram", inputs)
 
         elif entry_type == "psu":
             for entry in entries:
                 info = entry.get("info")
                 inputs.append((entry.get("name"), entry.get("price"), info.get("power"), entry.get("link")))
-                self.write_to_database("psu", inputs)
 
         elif entry_type == "tower":
             for entry in entries:
                 info = entry.get("info")
                 inputs.append((entry.get("name"), entry.get("price"), info.get("format"), info.get("panel"), info.get("lighting"), info.get("includedfans"), entry.get("link")))
-                self.write_to_database("tower", inputs)
 
         elif entry_type == "hdd":
             for entry in entries:
                 info = entry.get("info")
                 inputs.append((entry.get("name"), entry.get("price"), info.get("capacity"), entry.get("link")))
-                self.write_to_database("hdd", inputs)
 
         elif entry_type == "ssd":
             for entry in entries:
                 info = entry.get("info")
                 inputs.append((entry.get("name"), entry.get("price"), info.get("capacity"), info.get("bus"), entry.get("link"), info.get("format")))
-                self.write_to_database("ssd", inputs)
 
         elif entry_type == "fan":
             for entry in entries:
                 info = entry.get("info")
                 inputs.append((entry.get("name"), entry.get("price"), info.get("size"), entry.get("link")))
-                self.write_to_database("fan", inputs)
 
         elif entry_type == "game":
             for entry in entries:
                 inputs.append((entry.get("name"), entry.get("reqcpuid"), entry.get("reqgpuid"), entry.get("reqram"), entry.get("storage"), entry.get("imglink")))
-                self.write_to_database("game", inputs)
 
         elif entry_type == "cpu_ranking":
             for entry in entries:
                 inputs.append((entry.get("score"), entry.get("name")))
-                self.write_to_database("cpu_ranking", inputs)
 
         elif entry_type == "gpu_ranking":
             for entry in entries:
                 inputs.append((entry.get("score"), entry.get("name")))
-                self.write_to_database("gpu_ranking", inputs)
 
         elif entry_type == "cooler":
             for entry in entries:
                 info = entry.get("info")
                 inputs.append((entry.get("name"), entry.get("price"), info.get("type"), info.get("size"), entry.get("link")))
-                self.write_to_database("cooler", inputs)
 
+        self.write_to_database(entry_type, inputs)
         self.connection.commit()
 
     def drop_rows(self, table):

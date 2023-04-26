@@ -72,8 +72,8 @@ db.update_status("updating")
 # Removing all rows from all tables:
 db.drop_all_rows()
 
-# Removing and writing new rankings to database
-# db.remove_docs("rankings", component)
+# Writing new rankings to database
+print("Adding rankings to database:")
 for component, ranking in rankings.items():
     for ls in ranking:
         db.add_entries(ls, component+"_ranking")
