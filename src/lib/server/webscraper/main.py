@@ -2,7 +2,6 @@ import scraper
 from rankingscraper import get_rankings
 from dbhandler import Connection
 
-
 # Defining product categories
 categories = {"gpu": ["nvidia", "amd"],
               "cpu": ["intel", "amd"],
@@ -14,7 +13,6 @@ categories = {"gpu": ["nvidia", "amd"],
               "tower": ["mitx", "matx", "atx"],
               "motherboard": ["1200", "1700", "am4", "am5"],
               "fan": ["120", "140"]}
-
 
 # Searching for products
 
@@ -53,11 +51,50 @@ for component, ranking in rankings.items():
                         ranking_name = item_name.replace(" ", "").lower()
                         product_name = product.get("name").replace(" ", "").lower()
                         if ranking_name in product_name:
-                            if ("super" in product_name and not "super" in ranking_name) or ("ti" in product_name and not "ti" in ranking_name):
+                            if ("super" in product_name and "super" not in ranking_name) or (
+                                    "ti" in product_name and "ti" not in ranking_name):
                                 continue
-                            print("Found match: {} in {} with score {}".format(item.get("name"), product.get("name"), item.get("score")))
+                            print("Found match: {} in {} with score {}".format(item.get("name"), product.get("name"),
+                                                                               item.get("score")))
                             product.update({"score": item.get("score")})
-        
+
+
+def db_init():
+    db.drop_all_rows()
+
+    # Writing new rankings to database
+    print("Adding rankings to database:")
+    for comp, rank in rankings.items():
+        for items in rank:
+            db.add_entries(items, comp + "_ranking")
+
+    # Writing products to database
+    print("Writing products to database:")
+    for cat, prod in db_dump.items():
+        target = cat.split(" ")
+
+        print(f"Write: {target[0]} {target[1]}")
+        db.add_entries(prod, target[0])
+        print("Completed")
+
+
+def db_update(update_rankings: bool = False):
+    if update_rankings:
+        # Updating rankings
+        print("Updating rankings:")
+        for comp, rank in rankings.items():
+            for items in rank:
+                db.update_entries(items, comp + "_ranking")
+
+    # Updating products
+    print("Updating products:")
+    for cat, prod in db_dump.items():
+        target = cat.split(" ")
+
+        print(f"Update: {target[0]} {target[1]}")
+        db.update_entries(prod, target[0])
+        print("Completed")
+
 
 # Connecting to database
 print("Connecting to database...")
@@ -68,25 +105,11 @@ print("Connected to Postgresql successfully!")
 print("Updating database status: Updating")
 db.update_status("updating")
 
-
-# Removing all rows from all tables:
-db.drop_all_rows()
-
-# Writing new rankings to database
-print("Adding rankings to database:")
-for component, ranking in rankings.items():
-    for ls in ranking:
-        db.add_entries(ls, component+"_ranking")
-
-
-# Writing products to database
-print("Writing products to database:")
-for category, products in db_dump.items():
-    target = category.split(" ")
-
-    print(f"Write: {target[0]} {target[1]}")
-    db.add_entries(products, target[0])
-    print("Completed")
+try:
+    # db_init()
+    db_update()
+except:
+    db.disconnect()
 
 # Updating the status to operational
 print("Updating database status: Operational")

@@ -43,7 +43,7 @@ class Connection:
             "fan":
                 "INSERT INTO fan (name, price, size, link) VALUES (%s, %s, %s, %s)",
             "game":
-                "INSERT INTO game (name, reqcpuid, rqgpuid, reqram, storage, imglink) VALUES (%s, %s, %s, %s, %s, %s)",
+                "INSERT INTO game (name, reqcpuid, reqgpuid, reqram, storage, imglink) VALUES (%s, %s, %s, %s, %s, %s)",
             "cpu_ranking":
                 "INSERT INTO cpu_ranking (score, name) VALUES (%s, %s)",
             "gpu_ranking":
@@ -52,35 +52,6 @@ class Connection:
                 "INSERT INTO cooler (name, price, type, size, link) VALUES (%s, %s, %s, %s, %s)",
         }
 
-        self.delete_queries = {
-            "cpu":
-                "INSERT INTO cpu (name, price, socketid, score, generation, link) VALUES (%s, %s, %s, %s, %s, %s)",
-            "gpu":
-                "INSERT INTO gpu (name, price, bus, vram, score, link) VALUES (%s, %s, %s, %s, %s, %s)",
-            "motherboard":
-                "INSERT INTO motherboard (name, price, chipsetid, socketid, format, link, memoryslots, ddr5) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
-            "ram":
-                "INSERT INTO ram (name, price, speed, dims, capacity, link, ddr5) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-            "psu":
-                "INSERT INTO psu (name, price, power, link) VALUES (%s, %s, %s, %s)",
-            "tower":
-                "INSERT INTO tower (name, price, size, panel, lighting, includedfans, link) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-            "hdd":
-                "INSERT INTO hdd (name, price, capacity, link) VALUES (%s, %s, %s, %s)",
-            "ssd":
-                "INSERT INTO ssd (name, price, capacity, bus, link, format) VALUES (%s, %s, %s, %s, %s, %s)",
-            "fan":
-                "INSERT INTO fan (name, price, size, link) VALUES (%s, %s, %s, %s)",
-            "game":
-                "INSERT INTO game (name, reqcpuid, rqgpuid, reqram, storage, imglink) VALUES (%s, %s, %s, %s, %s, %s)",
-            "cpu_ranking":
-                "INSERT INTO cpu_ranking (score, name) VALUES (%s, %s)",
-            "gpu_ranking":
-                "INSERT INTO gpu_ranking (score, name) VALUES (%s, %s)",
-            "cooler":
-                "INSERT INTO cooler (name, price, type, size, link) VALUES (%s, %s, %s, %s, %s)",
-        }
-    
     def is_operational(self):
         query = "SELECT status FROM status ORDER BY id DESC LIMIT 1"
         self.cursor.execute(query)
@@ -91,8 +62,36 @@ class Connection:
         else:
             return False
 
+    def find_by_name(self, table, name):
+        self.cursor.execute("SELECT * FROM " + table + " WHERE name = %s", (name,))
+        return self.cursor.fetchone()
+
     def write_to_database(self, entry_type, inputs):
         execute_batch(self.cursor, self.insert_queries.get(entry_type), inputs)
+
+    def update_entries(self, entries, entry_type):
+        if self.is_operational():
+            raise Exception("Database is currently operational, unable to update products")
+        added = []
+
+        for entry in entries:
+            print("Updating " + entry_type + ": " + entry.get("name") + "...")
+            row = self.find_by_name(entry_type, entry.get("name"))
+            if row is None:
+                print(entry.get("name") + " not found, adding to queue...")
+                added.append(entry)
+                continue
+            else:
+                if entry_type in ("cpu", "gpu", "motherboard", "ram", "psu", "tower", "hdd", "ssd", "fan", "game", "cooler"):
+                    self.cursor.execute("UPDATE " + entry_type + " SET price = %s WHERE id = %s", (entry.get("price"), row[0]))
+                else:
+                    self.cursor.execute("UPDATE " + entry_type + " SET score = %s WHERE id = %s", (entry.get("score"), row[0]))
+                print("Updated " + entry.get("name") + " successfully")
+
+        self.add_entries(added, entry_type)
+        print("Committing changes")
+        self.connection.commit()
+        return added
 
     def add_entries(self, entries, entry_type):
         if self.is_operational():
@@ -150,7 +149,7 @@ class Connection:
 
         elif entry_type == "game":
             for entry in entries:
-                inputs.append((entry.get("name"), entry.get("reqcpuid"), entry.get("reqgpuid"), entry.get("reqram"), entry.get("storage"), entry.get("imglink")))
+                inputs.append((entry.get("name"), entry.get("cpu_id"), entry.get("gpu_id"), entry.get("recommended_ram"), entry.get("storage"), entry.get("img")))
 
         elif entry_type == "cpu_ranking":
             for entry in entries:

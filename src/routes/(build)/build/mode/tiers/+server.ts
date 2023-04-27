@@ -1,5 +1,5 @@
 import type { RequestHandler } from './$types';
-import { getPCsByTier } from '$lib/server/database/pcbuilder';
+import { getPCByTier } from '$lib/server/database/pcbuilder';
 import type {PC} from "../../../../../lib/server/database/pcbuilder";
 
 type Data = {
@@ -54,7 +54,7 @@ export const POST: RequestHandler = async ({ request }) => {
         return new Response(JSON.stringify(data),{"status": 400,"headers":{"content-type":"application/json"}});
     }
 
-    data.pcs.concat(await getPCsByTier(tier, size, parseInt(budget), looksMatter, 5));
+    data.pcs.push(await getPCByTier(tier, size, parseInt(budget), looksMatter));
 
     return new Response(JSON.stringify(data),{"status": 200, "headers":{"content-type":"application/json"}});
 };

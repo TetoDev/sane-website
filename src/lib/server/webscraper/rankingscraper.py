@@ -11,7 +11,7 @@ def scrape_items(page: BeautifulSoup, component: str):
         if component == "cpu":
             if ("Xeon" in name) or ("Opteron" in name) or ("Threadripper" in name) or ("EPYC" in name) or (
                     "ARM" in name) or ("Snapdragon" in name) or ("Mediatek" in name) or ("Embedded" in name) or (
-                    "Hygon" in name) or (not "intel" in name.lower() and not "amd" in name.lower()):
+                    "Hygon" in name) or ("intel" not in name.lower() and "amd" not in name.lower()):
                 continue
         elif component == "gpu":
             if ("Vega" in name) or ("TITAN" in name) or ("Tesla" in name) or ("Quadro" in name) or (
@@ -27,8 +27,7 @@ def scrape_items(page: BeautifulSoup, component: str):
             name = name.split("@")[0].strip()
         if "APU" in name:
             name = name.split("APU")[0].strip()
-        
-        
+
         score = item.find("span", class_="count").text
         score = score.replace(",", "").replace(".", "")
         score = int(score)
@@ -56,4 +55,3 @@ def get_rankings(component: str):
         components.append(scrape_items(soup, component))
 
     return components
-

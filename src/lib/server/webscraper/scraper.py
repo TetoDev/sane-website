@@ -40,7 +40,7 @@ def get_page(category, sorter, page):
         sub_url = "format_families=1560425&base_buses=1559283" if sorter == "sata" else ("format_families=1560421&base_buses=1559283" if sorter == "m2sata" else "format_families=1560421&base_buses=1559281")
         url = f"https://www.solotodo.cl/solid_state_drives?{sub_url}&page={page}"
         
-    else :
+    else:
         # hdd
         url = f"https://www.solotodo.cl/storage_drives?sizes=204422&page={page}"
         
@@ -87,7 +87,7 @@ def get_products(category, sorter, page):
                 info.update({"generation": generation})
 
             if category == "ram":
-                info.update({"ddr5": sorter=="ddr5"})
+                info.update({"ddr5": sorter == "ddr5"})
 
             if category == "cooler":
                 info.update({"type": sorter})
@@ -144,7 +144,7 @@ def get_products(category, sorter, page):
                 
                 elif spec.startswith("Memorias"):
                     split = spec.replace("Memorias", '').split(' ')
-                    info.update({"memoryslots": int(split[0].replace("x",''))})
+                    info.update({"memoryslots": int(split[0].replace("x", ''))})
                     info.update({"ddr5": split[1] == "DDR5"})
 
                 elif spec.startswith("Memoria"):
@@ -180,7 +180,7 @@ def get_products(category, sorter, page):
 
             if category == "cpu" or category == "gpu":
                 products.append({"name": name, "price": price, "info": info, "link": link, "category": category, "score": 0})
-            else :
+            else:
                 products.append({"name": name, "price": price, "info": info, "link": link, "category": category})
     
     return products

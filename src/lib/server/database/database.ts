@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
-import {MongoClient, Db, ObjectId} from 'mongodb';
-import type { WithId } from "mongodb";
+import { PrismaClient} from '@prisma/client';
+import type { cpu } from "@prisma/client";
 
 // Load env variables
 dotenv.config();
@@ -19,257 +19,240 @@ type Issue = {
     user: User,
 }
 
-let mongodb: MongoConnection;
+let db: Database;
 
 // Mongo Connection
-class MongoConnection {
-    private client: MongoClient | null;
-    private db: Map<string,Db>;
+class Database {
+    private client: PrismaClient | null;
 
     constructor(){
         this.client = null;
-        this.db = new Map<string,Db>();
     }
 
   
     public async connect(): Promise<void> {
       try {
-        this.client = await MongoClient.connect(process.env.DB_CONN_TYPESCRIPT ?? "");
-        this.db.set("accounts",this.client.db("accounts") as Db);
-        this.db.set("coolers",this.client.db("coolers") as Db);
-        this.db.set("cpu",this.client.db("cpu") as Db);
-        this.db.set("fans",this.client.db("fans") as Db);
-        this.db.set("gpu",this.client.db("gpu") as Db);
-        this.db.set("hdd",this.client.db("hdd") as Db);
-        this.db.set("issues",this.client.db("issues") as Db);
-        this.db.set("motherboards",this.client.db("motherboards") as Db);
-        this.db.set("oldListings",this.client.db("oldListings") as Db);
-        this.db.set("orders",this.client.db("orders") as Db);
-        this.db.set("psu",this.client.db("psu") as Db);
-        this.db.set("ram",this.client.db("ram") as Db);
-        this.db.set("ssd",this.client.db("ssd") as Db);
-        this.db.set("status",this.client.db("status") as Db);
-        this.db.set("towers",this.client.db("towers") as Db);
-        this.db.set("rankings",this.client.db("rankings") as Db);
-        this.db.set("games",this.client.db("games") as Db);
+        this.client = new PrismaClient();
       } catch (error) {
         console.error(error);
       }
     }
 
-    public getDatabase(dbName: string){
-        return this.db.get(dbName) as Db;
-    }
-  
-    public getCollection(dbName:string, collectionName: string) {
-        return this.getDatabase(dbName).collection(collectionName);
-    }
-
-    public async writeDocuments(dbName:string, collectionName: string, documents: Object[]) {
-        console.log("Writing " + String(documents.length) + " documents to " + dbName + ": " + collectionName)
-        const collection = this.getCollection(dbName,collectionName);
-
-        await collection.insertMany(documents);
-    }
-
-    public async writeDocument(dbName:string, collectionName: string, document: Object) {
-        console.log("Writing 1 document to " + dbName + ": " + collectionName)
-        const collection = this.getCollection(dbName,collectionName);
-
-        await collection.insertOne(document);
-    }
-
-    public async getCpuFromRanking(score: number){
-        const cpuRanking = this.getCollection("rankings","cpu");
-        const amdcpus = await cpuRanking.find({name:{$regex: "AMD"},score: {$gte: score-5000, $lte: score+5000}}).toArray();
-        const intelcpus = await cpuRanking?.find({name:{$regex: "Intel"},score: {$gte: score-1000, $lte: score+1000}}).toArray();
-        
-        const sortedAmdCpus = amdcpus.sort((cpu1,cpu2) => Math.abs(cpu1.score - score) - Math.abs(cpu2.score - score));
-        const sortedIntelCpus = intelcpus.sort((cpu1,cpu2) => Math.abs(cpu1.score - score) - Math.abs(cpu2.score - score));
-
-        const cpu = Math.abs(sortedAmdCpus[0].score - score) < Math.abs(sortedIntelCpus[0].score - score) ? sortedAmdCpus[0] : sortedIntelCpus[0];
-        return cpu;
-    }
-
-    public async getCpuFromStoreByScore(score: number, scoreDiff: number, except: ObjectId[]){
-        const intelCpuStore = this.getCollection("cpu","intel");
-        const intelCpus = await intelCpuStore.find({score: {$gte: score-scoreDiff, $lte: score+scoreDiff}}).toArray();
-        const sortedIntelCpus = intelCpus.sort((cpu1,cpu2) => Math.abs(cpu1.score - score) - Math.abs(cpu2.score - score));
-
-        const amdCpuStore = this.getCollection("cpu","amd");
-        const amdCpus = await amdCpuStore.find({score: {$gte: score-scoreDiff, $lte: score+scoreDiff}}).toArray();
-        const sortedAmdCpus = amdCpus.sort((cpu1,cpu2) => Math.abs(cpu1.score - score) - Math.abs(cpu2.score - score));
-
-        sortedIntelCpus.forEach(cpu => {
-            if(except.includes(cpu._id) && sortedIntelCpus.length > 1){
-                sortedIntelCpus.splice(sortedIntelCpus.indexOf(cpu),1);
-            }
-        })
-        sortedAmdCpus.forEach(cpu => {
-            if(except.includes(cpu._id) && sortedAmdCpus.length > 1){
-                sortedAmdCpus.splice(sortedAmdCpus.indexOf(cpu),1);
-            }
-        })
-
-
-        const cpus = [sortedAmdCpus[0],sortedIntelCpus[0]]
-
-        return cpus.sort((cpu1,cpu2) => Math.abs(cpu1.score - score) - Math.abs(cpu2.score - score))[0];
-    }
-
-    public async getGpuFromStoreByScore(score: number, scoreDiff: number, except: ObjectId[]){
-        const nvidiaGpuStore = this.getCollection("gpu","nvidia");
-        const nvidiaGpus = await nvidiaGpuStore.find({score: {$gte: score-scoreDiff, $lte: score+scoreDiff}}).toArray();
-        const sortedNvidiaGpus = nvidiaGpus.sort((gpu1,gpu2) => Math.abs(gpu1.score - score) - Math.abs(gpu2.score - score));
-
-        const amdGpuStore = this.getCollection("gpu","amd");
-        const amdGpus = await amdGpuStore.find({score: {$gte: score-scoreDiff, $lte: score+scoreDiff}}).toArray();
-        const sortedAmdGpus = amdGpus.sort((gpu1,gpu2) => Math.abs(gpu1.score - score) - Math.abs(gpu2.score - score));
-
-        sortedNvidiaGpus.forEach(gpu => {
-            if(except.includes(gpu._id) && sortedNvidiaGpus.length > 1){
-                sortedNvidiaGpus.splice(sortedNvidiaGpus.indexOf(gpu),1);
-            }
-        });
-        sortedAmdGpus.forEach(gpu => {
-            if(except.includes(gpu._id) && sortedAmdGpus.length > 1){
-                sortedAmdGpus.splice(sortedAmdGpus.indexOf(gpu),1);
-            }
-        });
-
-        const gpus = [sortedAmdGpus[0],sortedNvidiaGpus[0]]
-
-        return gpus.sort((gpu1,gpu2) => Math.abs(gpu1.score - score) - Math.abs(gpu2.score - score))[0];
-    }
-
-    public async getMotherboard(socket: string, chipset: string, ramSlots: number, format: string, except: ObjectId[]){ // Take into consideration motherboard format and ram slots
-        const motherboardStore = this.getCollection("motherboards",socket);
-        const motherboards = await motherboardStore.find({info: {chipset: chipset}}).toArray();
-
-        motherboards.forEach(motherboard => {
-            if(except.includes(motherboard._id) && motherboards.length > 1){
-                motherboards.splice(motherboards.indexOf(motherboard),1);
-            }
-        });
-
-        return motherboards[0];
-    }
-
-    public async getRam(gen: string, slots: number, capacity: number, frequency: number, except: ObjectId[]){
-        const ramStore = this.getCollection("ram",gen);
-
-        const capacityQuery = slots.toString() + " x " + capacity.toString() + " GB";
-        const frequencyQuery = frequency.toString() + " MHz";
-        const rams = await ramStore.find({info: {frequency: frequencyQuery, capacity: capacityQuery}}).toArray();
-
-        rams.forEach(ram => {
-            if(except.includes(ram._id) && rams.length > 1){
-                rams.splice(rams.indexOf(ram),1);
-            }
-        });
-
-        return rams[0];
-    }
-
-    public async getPsu(wattage: number, except: ObjectId[]){
-        const psuStore = this.getCollection("psu","certified");
-        const psus = await psuStore.find({wattage: wattage}).toArray();
-
-        psus.forEach(psu => {
-            if(except.includes(psu._id) && psus.length > 1){
-                psus.splice(psus.indexOf(psu),1);
-            }
-        });
-
-        return psus[0];
-    }
-
-    public async getSsd(bus: string, capacity: number, except: ObjectId[]){
-        const ssdStore = this.getCollection("ssd",bus);
-        const ssds = await ssdStore.find({info: {capacity: {$regex: capacity.toString()}}}).toArray();
-
-        ssds.forEach(ssd => {
-            if(except.includes(ssd._id) && ssds.length > 1){
-                ssds.splice(ssds.indexOf(ssd),1);
-            }
-        });
-
-        return ssds[0];
-    }
-
-    public async getHdd(capacity: number, except: ObjectId[]){
-        const hddStore = this.getCollection("hdd","fullSize");
-        const hdds = await hddStore.find({info: {capacity: {$regex: capacity.toString()}}}).toArray();
-
-        hdds.forEach(hdd => {
-           if (except.includes(hdd._id) && hdds.length > 1){
-               hdds.splice(hdds.indexOf(hdd),1);
+    public async postIssue(issue: Issue) {
+        console.log("Posting issue to database: " + issue.user.email + " for order " + issue.orderNumber)
+        await this.client?.issue.create({
+           data: {
+               name: issue.user.name,
+               email: issue.user.email,
+               phone: issue.user.phone,
+               issue: issue.description,
            }
         });
-
-        return hdds[0];
     }
 
-    public async getCase(tier: string, size: string, looks: boolean, except: ObjectId[]){
-        const caseStore = this.getCollection("cases",size);
-
-        let cases = await caseStore.find({info: {lighting: {$ne: "No"}, includedFans: {$ne: "No posee"}, panel: "Vidrio templado"}}).toArray();
-        if (looks) {
-            if (tier == "low") {
-                cases = await caseStore.find({info: {lighting: {$ne: "No"}}}).toArray();
-            } else if (tier == "mid"){
-                cases = await caseStore.find({info: {lighting: {$ne: "No"}, includedFans: {$ne: "No posee"}}}).toArray();
+    public async getCpusByScore(score: number) {
+        return this.client?.cpu.findMany({
+            where: {
+                score: {
+                    gte: score,
+                }
+            },
+            orderBy: {
+                price: 'asc',
             }
-        } else {
-            if (tier == "low") {
-                cases = await caseStore.find().toArray() as WithId<Document>[];
-            } else if (tier == "mid"){
-                cases = await caseStore.find({info: {includedFans: {$ne: "No posee"}}}).toArray();
-            } else if (tier == "high"){
-                cases = await caseStore.find({info: {includedFans: {$ne: "No posee"}}}).toArray();
-            }
-        }
+        });
+    }
 
-        cases.forEach(casee => {
-            if(except.includes(casee._id) && cases.length > 1){
-                cases.splice(cases.indexOf(casee),1);
+    public async getGpusByScore(score: number) {
+        return this.client?.gpu.findMany({
+            where: {
+                score: {
+                    gte: score,
+                }
+            },
+            orderBy: {
+                price: 'asc',
+            }
+        });
+    }
+
+    public async getCpuRanking(id: number) {
+        return this.client?.cpu_ranking.findUnique({
+            where: {
+                id: id,
             }
         })
-
-        return cases[0];
     }
 
-    public async getGpuFromRanking(score: number){
-      const gpuRanking = this.getCollection("rankings","gpu");
-      const amdgpus = await gpuRanking.find({name:{$regex: "Radeon"},score: {$gte: score-5000, $lte: score+5000}}).toArray();
-      const nvidiagpus = await gpuRanking.find({name:{$regex: "GeForce"},score: {$gte: score-1000, $lte: score+1000}}).toArray();
-      
-      const sortedAmdGpus = amdgpus.sort((gpu1,gpu2) => Math.abs(gpu1.score - score) - Math.abs(gpu2.score - score));
-      const sortedNvidiaGpus = nvidiagpus.sort((gpu1,gpu2) => Math.abs(gpu1.score - score) - Math.abs(gpu2.score - score));
-
-      const gpu = Math.abs(sortedAmdGpus[0].score - score) < Math.abs(sortedNvidiaGpus[0].score - score) ? sortedAmdGpus[0] : sortedNvidiaGpus[0];
-      return gpu;
-  }
-
-  public async getCpuFromStore(name: string){
-    const isAmd = name.includes("AMD");
-    const cpuStore = this.getCollection("cpu",isAmd ? "amd" : "intel");
-
-    let searchName: string;
-    if (!isAmd){
-      searchName = name.replace("Intel Core ","");
-      const arrobaIndex = searchName.indexOf("@");
-
-      searchName = searchName.substring(0,arrobaIndex-1);
-    } else {
-      searchName = name
+    public async getGpuRanking(id: number) {
+        return this.client?.gpu_ranking.findUnique({
+            where: {
+                id: id,
+            }
+        })
     }
-    const cpu = await cpuStore.findOne({name: searchName});
-  }
-  
+
+    public async getGames() {
+        return this.client?.game.findMany();
+    }
+
+    public async getMotherboards(cpu: cpu, ddr5: boolean, ramSlots: number, size: string, exceptions: number[]) {
+        const chipsets = await this.client?.chipset.findMany({
+            where: {
+                supportedgenerations: {
+                    has: cpu.generation,
+                }
+            }
+        });
+
+        const chipsetIds = chipsets?.map(chipset => chipset.id);
+
+        return this.client?.motherboard.findMany({
+            where: {
+                socketid: cpu.socketid,
+                chipsetid: {
+                    in: chipsetIds,
+                },
+                memoryslots: ramSlots,
+                format: size,
+                ddr5: ddr5,
+                id: {
+                    notIn: exceptions,
+                }
+            },
+            orderBy: {
+                price: 'asc',
+            }
+        });
+    }
+
+    public async getChipset(id: number){
+        return this.client?.chipset.findUnique({
+            where: {
+                id: id,
+            }
+        });
+    }
+
+    public async getRams(ddr5: boolean, capacity:number, ramSpeed: number, ramSlots: number, exceptions: number[]) {
+        return this.client?.ram.findMany({
+            where: {
+                ddr5: ddr5,
+                dims: ramSlots,
+                speed: {
+                    gte: ramSpeed,
+                },
+                capacity: {
+                    gte: capacity,
+                },
+                id: {
+                    notIn: exceptions,
+                }
+            },
+            orderBy: {
+                price: 'asc',
+            }
+        });
+    }
+
+    public async getTowers(size: string, looks: boolean, exceptions: number[]) {
+        return this.client?.tower.findMany({
+            where: {
+                size: size,
+                lighting: looks,
+                id: {
+                    notIn: exceptions,
+                }
+            },
+            orderBy: {
+                price: 'asc',
+            }
+        });
+    }
+
+    public async getPsus(wattage: number, exceptions: number[]) {
+        return this.client?.psu.findMany({
+            where: {
+                power: {
+                    gte: wattage,
+                },
+                id: {
+                    notIn: exceptions,
+                }
+            },
+            orderBy: {
+                price: 'asc',
+            }
+        });
+    }
+
+    public async getHdds(capacity: number, exceptions: number[]) {
+        return this.client?.hdd.findMany({
+            where: {
+                capacity: {
+                    gte: capacity,
+                },
+                id: {
+                    notIn: exceptions,
+                }
+            },
+            orderBy: {
+                price: 'asc',
+            }
+        });
+    }
+
+    public async getSsds(capacity: number, format: string, bus: string, exceptions: number[]) {
+        return this.client?.ssd.findMany({
+            where: {
+                capacity: {
+                    gte: capacity,
+                },
+                format: format,
+                bus: {
+                    contains: bus,
+                },
+                id: {
+                    notIn: exceptions,
+                }
+            },
+            orderBy: {
+                price: 'asc',
+            }
+        });
+    }
+
+    public async getCoolers(water: boolean, exceptions: number[]) {
+        return this.client?.cooler.findMany({
+            where: {
+                type: water ? "water" : "air",
+                id: {
+                    notIn: exceptions,
+                }
+            },
+            orderBy: {
+                price: 'asc',
+            }
+        });
+    }
+
+    public async getFans(size: string, exceptions: number[]){
+        return this.client?.fan.findMany({
+            where: {
+                size: size,
+                id: {
+                    notIn: exceptions,
+                }
+            },
+            orderBy: {
+                price: 'asc',
+            }
+        });
+    }
+
     public async disconnect(): Promise<void> {
       try {
-        await this.client?.close();
+        await this.client?.$disconnect();
       } catch (error) {
         console.error(error);
       }
@@ -277,10 +260,10 @@ class MongoConnection {
 }
 
 export async function createConnection(){
-    if (mongodb) return;
+    if (db) return;
     
-    mongodb = new MongoConnection()
-    await mongodb.connect();
+    db = new Database()
+    await db.connect();
 }
 
 export function postIssue (name: string, phone: string, email:string, description:string, orderNumber?: string) {
@@ -296,45 +279,61 @@ export function postIssue (name: string, phone: string, email:string, descriptio
         user,
     }
 
-    mongodb.writeDocument("issues", "unsolved", issue).then(() => {console.log("New issue added to db: " + email + " for order " + orderNumber)});
+    db.postIssue(issue).then(() => {console.log("New issue added to db: " + email + " for order " + orderNumber)});
 }
 
-export async function getCpuFromRanking(score: number){
-    return await mongodb.getCpuFromRanking(score);
+export async function getCpusByScore(score: number) {
+    return await db.getCpusByScore(score);
 }
 
-export async function getGpuFromRanking(score: number){
-    return await mongodb.getGpuFromRanking(score);
+export async function getGpusByScore(score: number) {
+    return await db.getGpusByScore(score);
 }
 
-export async function getCpuFromStoreByScore(score: number, scoreDiff: number, except: ObjectId[]){
-    return await mongodb.getCpuFromStoreByScore(score,scoreDiff,except);
+export async function getCpuRanking(id: number) {
+    return await db.getCpuRanking(id);
 }
 
-export async function getGpuFromStoreByScore(score: number, scoreDiff: number, except: ObjectId[]){
-    return await mongodb.getGpuFromStoreByScore(score,scoreDiff,except);
+export async function getGpuRanking(id: number) {
+    return await db.getGpuRanking(id);
 }
 
-export async function getMotherboard(socket: string, chipset: string, ramSlots: number, format: string, except: ObjectId[]){
-    return await mongodb.getMotherboard(socket,chipset, ramSlots, format, except);
+export async function getGames() {
+    return await db.getGames();
 }
 
-export async function getRam(gen: string, slots: number, capacity: number, frequency: number, except: ObjectId[]){
-    return await mongodb.getRam(gen,slots, capacity, frequency, except);
+export async function getMotherboards(cpu: cpu, ddr5: boolean, ramSlots: number, size: string, exceptions: number[]) {
+    return await db.getMotherboards(cpu, ddr5, ramSlots, size, exceptions);
 }
 
-export async function getPsu(wattage: number, except: ObjectId[]){
-    return await mongodb.getPsu(wattage, except);
+export async function getRams(ddr5: boolean, capacity:number, ramSpeed: number, ramSlots: number, exceptions: number[]) {
+    return await db.getRams(ddr5, capacity, ramSpeed, ramSlots, exceptions);
 }
 
-export async function getSsd(bus: string, capacity: number, except: ObjectId[]){
-    return await mongodb.getSsd(bus,capacity, except);
+export async function getTowers(size: string, looks: boolean, exceptions: number[]) {
+    return await db.getTowers(size, looks, exceptions);
 }
 
-export async function getHdd(capacity: number, except: ObjectId[]){
-    return await mongodb.getHdd(capacity, except);
+export async function getPsus(wattage: number, exceptions: number[]) {
+    return await db.getPsus(wattage, exceptions);
 }
 
-export async function getCase(tier: string, size: string, looks: boolean, except: ObjectId[]){
-    return await mongodb.getCase(tier,size,looks, except);
+export async function getHdds(capacity: number, exceptions: number[]) {
+    return await db.getHdds(capacity, exceptions);
+}
+
+export async function getSsds(capacity: number, format: string, bus: string, exceptions: number[]) {
+    return await db.getSsds(capacity, format, bus, exceptions);
+}
+
+export async function getCoolers(water: boolean, exceptions: number[]) {
+    return await db.getCoolers(water, exceptions);
+}
+
+export async function getFans(size: string, exceptions: number[]) {
+    return await db.getFans(size, exceptions);
+}
+
+export async function getChipset(id: number){
+    return await db.getChipset(id);
 }
