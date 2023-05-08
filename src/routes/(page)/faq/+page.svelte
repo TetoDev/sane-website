@@ -43,7 +43,7 @@
 
 <div id="wrapper">
     <button bind:this={previousButton} on:click={decreaseId}>
-        <img draggable="false" id="previous" src="src/lib/img/arrow.png" alt="arrow">
+        <img draggable="false" id="previous" src="/img/arrow.png" alt="arrow">
         <p>Anterior</p>
     </button>
 
@@ -52,7 +52,7 @@
     </div>
 
     <button bind:this={nextButton} on:click={increaseId}>
-        <img draggable="false" id="next" src="src/lib/img/arrow.png" alt="arrow">
+        <img draggable="false" id="next" src="/img/arrow.png" alt="arrow">
         <p>Siguiente</p>
     </button>
 </div>

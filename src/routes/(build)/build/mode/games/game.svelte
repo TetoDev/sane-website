@@ -11,7 +11,7 @@
     <div class="transparency-bg" style="background-color: rgba(0, 0, 0, {selected === '0' ? 0.5 : 0.2});">
         <h2>{title}</h2>
         <div class="img-wrapper" style="opacity: {parseInt(selected)};">
-            <img src="../../../../src/lib/img/tick.png" alt="SELECTED">
+            <img src="/img/tick.png" alt="SELECTED">
         </div>
     </div>
 </div>

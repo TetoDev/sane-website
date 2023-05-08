@@ -7,7 +7,7 @@
     <ul>
         <li><a class="nav-button" href="/build/mode">Build</a></li>
         <li><a class="nav-button" href="/faq/">FAQ</a></li>
-        <li><a href="/"><img src="src/lib/img/squareblanco.png" alt="SANE"></a></li>
+        <li><a href="/"><img src="/img/squareblanco.png" alt="SANE"></a></li>
         <li><a class="nav-button" href="/soporte/">Soporte</a></li>
         <li><a class="nav-button" href="/nosotros/">Nosotros</a></li>
     </ul>
@@ -29,7 +29,7 @@
             <a href="/nosotros/">Nosotros</a>
         </div>
         <div id="mid-panel">
-            <a href="/"><img src="src/lib/img/nblue300.png" alt="sane"></a>
+            <a href="/"><img src="/img/nblue300.png" alt="sane"></a>
         </div>
         <div id="media">
             <p>Redes Sociales</p>

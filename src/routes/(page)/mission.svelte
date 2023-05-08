@@ -1,7 +1,7 @@
 <div class="parallax">
     <div class="transparency"></div>
     <video autoplay muted loop>
-        <source src="src/lib/videos/bt.mp4">
+        <source src="/videos/bt.mp4">
     </video>
     <h1>SANE BUILDS construye tu <p id="highlight">pc de ensueño</p> al mejor precio y sin recortes</h1>
 </div>

@@ -10,7 +10,7 @@
 <div>
     <div class="transparency"></div>
     <video autoplay muted loop>
-        <source src="src/lib/videos/bg.mp4">
+        <source src="/videos/bg.mp4">
     </video>
     <Hero></Hero>
     <Popups></Popups>

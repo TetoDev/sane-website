@@ -1,9 +1,9 @@
 <div id="wrapper">
     <div>
         <p>¡Síguenos en nuestras redes sociales!</p>
-        <img id="ig" src="src/lib/img/instagram.png" alt="IG">
-        <img id="yt" src="src/lib/img/youtube.png" alt="YT">
-        <img id="tw" src="src/lib/img/twitter.png" alt="TW">
+        <img id="ig" src="/img/instagram.png" alt="IG">
+        <img id="yt" src="/img/youtube.png" alt="YT">
+        <img id="tw" src="/img/twitter.png" alt="TW">
     </div>
     
 </div>

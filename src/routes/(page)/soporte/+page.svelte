@@ -44,14 +44,14 @@
 
 <div class="prompt-wrapper">
     <div class="prompt" id="success" bind:this={success}>
-        <img src="src/lib/img/tick.png" alt="Success">
+        <img src="/img/tick.png" alt="Success">
         <p>Tu petición se ha enviado correctamente, estaremos en contacto contigo lo antes possible.</p>
     </div>
 </div>
 
 <div class="prompt-wrapper">
     <div class="prompt" id="error" bind:this={error}>
-        <img src="src/lib/img/cross.png" alt="Error">
+        <img src="/img/cross.png" alt="Error">
         <p>Se ha producido un problema al enviar su petición, intente nuevamente.</p>
     </div>
 </div>
