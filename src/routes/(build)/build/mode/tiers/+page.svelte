@@ -182,7 +182,7 @@
 
     select, input {
         max-width: 400px;
-        font-family: "Poppins";
+        font-family: "Poppins", sans-serif;
         padding: 5px;
     }
 
@@ -263,14 +263,14 @@
     }
 
     .button-wrapper span h2 {
-        font-family: "Oswald";
+        font-family: "Oswald", sans-serif;
         text-transform: uppercase;
         font-size: 60px;
         margin: 0;
     }
 
     .button-wrapper span p {
-        font-family: "Poppins";
+        font-family: "Poppins", sans-serif;
         font-size: 18px;
     }
 </style>

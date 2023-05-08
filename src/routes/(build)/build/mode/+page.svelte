@@ -1,17 +1,25 @@
+<script lang="ts">
+    import Loadingscreen from '../../loadingscreen.svelte'
+
+    let loading: boolean = false;
+</script>
+
 <span>Escoge tu modo preferido para construir tu PC</span>
+
 <div>
     <a href="/build/mode/tiers">
         <h2>EASY</h2>
         <p>Dínos tu presupuesto y la gama de tu futuro PC y te daremos opciones de baja a alta gama</p>
     </a>
     
-    <a href="/build/mode/games">
+    <a href="/build/mode/games" on:click={() => loading = true}>
         <h2>ADVANCED</h2>
         <p>Selecciona los juegos que quieres jugar y a qué FPS y te daremos la mejor opción acorde a tu presupuesto</p>
     </a>
 </div>
-
-
+{#if loading}
+    <Loadingscreen text="Cargando Juegos"/>
+{/if}
 
 <style>
 

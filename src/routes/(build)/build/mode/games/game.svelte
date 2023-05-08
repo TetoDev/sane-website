@@ -1,3 +1,4 @@
+<!--suppress ALL -->
 <script lang="ts">
 
     export let title: string;

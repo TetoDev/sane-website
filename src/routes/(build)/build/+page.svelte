@@ -1,6 +1,3 @@
-<script lang="ts">
-
-</script>
 <div>
     <a href="build/mode">¡Comienza a construir!</a>
 </div>

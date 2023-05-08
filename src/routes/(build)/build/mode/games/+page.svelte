@@ -5,6 +5,10 @@
     const games = data.post;
 
     let tier = 1;
+    let error = '';
+    let budget: number;
+    let rgb = false;
+    let size: string = 'ATX';
 
     const options = [
         {title: "Menos que mínimo", value: 0},
@@ -19,6 +23,17 @@
         const selectedGames = games.filter(game => game.selected);
         const selectedGamesIds = selectedGames.map(game => game.id);
 
+        if (selectedGamesIds.length === 0) {
+            error = 'Selecciona al menos un juego';
+            return;
+        }
+        if (tier < 0 || tier > 5) {
+            error = 'Selecciona un tier válido';
+            return;
+        }
+
+        error = ''
+
         const response = await fetch('/build/mode/games', {
             method: 'POST',
             headers: {
@@ -26,7 +41,10 @@
             },
             body: JSON.stringify({
                 games: selectedGamesIds,
-                tier: tier
+                tier: tier,
+                size: size,
+                rgb: rgb,
+                budget: budget
             })
         });
 
@@ -54,12 +72,45 @@
                     {option.title}
                 </button>
             {/each}
+            <span>
+                <h2>PRESUPUESTO:</h2>
+                <input type="number" bind:value={budget}>
+            </span>
+            <span>
+                <h2>GABINETE:</h2>
+                <label>
+                    Importa la estética (RGB, Panel transparente)?
+                    <input type="checkbox" bind:checked={rgb}>
+                </label>
+                <label>
+                    Que tamaño de gabinete quiere?
+                    <select name="size" id="size" bind:value={size}>
+                        <option value="ATX">Estándar (Recomendado)</option>
+                        <option value="Micro ATX">Mediano</option>
+                    </select>
+                </label>
+            </span>
         </div>
         <button class="submit" on:click={submit}>GENERAR PC</button>
     </div>
+    {#if error !== ''}
+        <p class="error">{error}</p>
+    {/if}
 </div>
 
 <style>
+    span {
+        margin: 0 2em;
+    }
+
+
+    .error {
+        color: red;
+        font-size: 2em;
+        font-weight: bold;
+        text-align: center;
+    }
+
     .submit {
         border: none;
         border-radius: 10px;
