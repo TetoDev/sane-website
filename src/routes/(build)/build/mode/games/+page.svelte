@@ -65,7 +65,7 @@
         border-radius: 10px;
         width: 250px;
         height: 80px;
-        font-family: "Oswald";
+        font-family: "Oswald", sans-serif;
         text-transform: uppercase;
         font-size: 30px;
         font-weight: bold;

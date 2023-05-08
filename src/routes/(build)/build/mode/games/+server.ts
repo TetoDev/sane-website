@@ -37,8 +37,8 @@ export const POST: RequestHandler = async ({ request }) => {
     const highestCpuScore = Math.max(...selectedGames.map(game => game.cpuscore));
     const highestGpuScore = Math.max(...selectedGames.map(game => game.gpuscore));
 
-    const targetCpu = Math.round(highestCpuScore * (1 + (tier * 0.1))); // CHANGE
-    const targetGpu = Math.round(highestGpuScore * (1 + (tier * 0.1))); // CHANGE
+    const targetCpu = highestCpuScore + (tier+1)*3000; // CHANGE
+    const targetGpu = highestGpuScore + (tier+1)*3000; // CHANGE
     const targetRam = 16;
     const ssdStorage = 500;
     const hddStorage = 1000;

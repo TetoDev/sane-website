@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import { PrismaClient} from '@prisma/client';
-import type { cpu } from "@prisma/client";
 
 // Load env variables
 dotenv.config();

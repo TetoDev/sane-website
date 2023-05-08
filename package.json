@@ -7,6 +7,7 @@
 		"build": "vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"start": "node build",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --plugin-search-dir . --check .",
 		"format": "prettier --plugin-search-dir . --write ."
@@ -26,7 +27,7 @@
 	"type": "module",
 	"dependencies": {
 		"@prisma/client": "^4.13.0",
-		"dotenv": "^16.0.3",
-		"mongodb": "^5.2.0"
+		"@sveltejs/adapter-node": "^1.2.4",
+		"dotenv": "^16.0.3"
 	}
 }
