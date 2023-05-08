@@ -1,183 +1,128 @@
 import {
-    getChipset,
-    getCpusByScore,
-    getGpusByScore,
+    getChipset, getCoolers,
+    getCpus, getFans,
+    getGpus, getHdds,
     getMotherboards,
     getPsus,
     getRams,
     getSsds,
     getTowers
 } from "./database";
-import type {chipset, cpu, gpu, motherboard, psu, ram, tower} from "@prisma/client";
+import type {chipset, cooler, cpu, gpu, motherboard, psu, ram, tower, hdd, ssd, fan} from "@prisma/client";
+import {pickCpu} from "$lib/server/database/pickers/cpupicker";
+import {pickGpu} from "$lib/server/database/pickers/gpupicker";
+import {pickRam} from "$lib/server/database/pickers/rampicker";
+import {pickMotherboard} from "$lib/server/database/pickers/mbpicker";
+import {pickSsd} from "$lib/server/database/pickers/ssdpicker";
+import {pickTower} from "$lib/server/database/pickers/towerpicker";
+import {pickPsu} from "$lib/server/database/pickers/psupicker";
+import {pickHdd} from "$lib/server/database/pickers/hddpicker";
+import {pickFan} from "$lib/server/database/pickers/fanpicker";
+import {pickCooler} from "$lib/server/database/pickers/coolerpicker";
 
 
-interface Cpu {
-    name: string,
-    price: number,
-    id: number,
-}
-
-interface Cooler {
-    name: string,
-    price: number,
-    height: number,
-    id: number,
-}
-
-interface Motherboard {
-    name: string,
-    price: number,
-    memorySlots: number,
-    id: number,
-}
-
-interface Ram {
-    name: string,
-    price: number,
-    ddr: string,
-    id: number,
-}
-
-interface Gpu {
-    name: string,
-    price: number,
-    bus: string,
-    id: number,
-}
-
-interface Psu {
-    name: string,
-    price: number,
-    wattage: number,
-    id: number,
-}
-
-interface Hdd {
-    name: string,
-    price: number,
-    capacity: number,
-    id: number,
-}
-
-interface Ssd {
-    name: string,
-    price: number,
-    capacity: number,
-    bus: string,
-    id: number,
-}
-
-interface Case {
-    name: string,
-    price: number,
-    size: string,
-    id: number,
-}
-
-interface Fan {
-    name: string,
-    price: number,
-    size: string,
-    id: number,
-}
 
 export interface PC {
-    cpu: Cpu,
-    cooler?: Cooler,
-    motherboard: Motherboard,
-    ram: Ram,
-    gpu: Gpu,
-    psu: Psu,
-    hdd?: Hdd,
-    ssd: Ssd,
-    case: Case,
-    fans: Fan[],
+    cpu: cpu,
+    cooler?: cooler,
+    motherboard: motherboard,
+    ram: ram,
+    gpu: gpu,
+    psu: psu,
+    hdd?: hdd,
+    ssd: ssd,
+    case: tower,
+    fan?: fan,
     total: number,
 }
 
-export async function getPCByTier(tier: string, size: string, budget: number, looks: boolean): Promise<PC> {
+export async function getPCs(targetCpu: number, targetGpu: number, targetRam: number, ssdStorage: number, hddStorage: number, size: string, budget: number, looks: boolean, amount: number): Promise<PC[]> {
 
-    const targetCpu = tier === 'low'? 10000 : (tier === 'mid' ? 25000 : 45000);
-    const targetGpu =  tier === 'low' ? 8000 : (tier === 'mid' ? 17000 : 30000);
-    const targetRam = tier === 'low' ? 8 : 16;
+    const pcs: PC[] = [];
 
-    const cpus = await getCpusByScore(targetCpu) as cpu[];
-    const gpus = await getGpusByScore(targetGpu) as gpu[];
+    let cpuScore = targetCpu;
+    let gpuScore = targetGpu;
 
-    const cpu = cpus[0];
-    const gpu = gpus[0];
+    const allCpus = await getCpus() as cpu[];
+    const allGpus = await getGpus() as gpu[];
+    const allCooler = await getCoolers() as cooler[];
+    const allRams = await getRams() as ram[];
+    const allSsds = await getSsds() as ssd[];
+    const allHdds = await getHdds() as hdd[];
+    const allTowers = await getTowers(size) as tower[];
+    const allPsus = await getPsus() as psu[];
+    const allMotherboards = await getMotherboards(size) as motherboard[];
+    const allFans = await getFans() as fan[];
 
-    const ddr5 = cpu.generation === "R7" || (cpu.generation === "ALDER" && tier === "high") || (cpu.generation === "ROCKET" && tier === "high");
-    const motherboards = await getMotherboards(cpu, ddr5, 2, size, []) as motherboard[];
+    const towerExceptions: number[] = [];
+    const motherboardExceptions: number[] = [];
+    const fanExceptions: number[] = [];
+    const ssdExceptions: number[] = [];
+    const hddExceptions: number[] = [];
 
-    const motherboard = motherboards[0];
-    const chipset = await getChipset(motherboard.chipsetid) as chipset;
 
-    const ramSpeed = ddr5 ? chipset.ddr5 - 2000 : chipset.ddr4 - 1000;
-    const rams = await getRams(ddr5, targetRam, ramSpeed, 2, []) as ram[];
-    const ram = rams[0];
+    let motherboardUndefined: boolean;
+    for (let i = 0; i < amount; i++) {
 
-    const ssds = await getSsds(tier === "high" ? 1000 : 500, tier === "high" || tier === "mid" ? "M.2" : "2.5\"", tier === "high" || tier === "mid" ? "PCIe" : "SATA 3",[]) as Ssd[];
-    const ssd = ssds[0];
+        const cpu = pickCpu(cpuScore, allCpus, []);
+        const gpu = pickGpu(gpuScore, allGpus, []);
+        const cooler = pickCooler(cpu, allCooler, size === "Mini ITX", []);
+        const motherboard = await pickMotherboard(cpu, allMotherboards, motherboardExceptions);
 
-    const towers = await getTowers(size, looks, []) as tower[];
-    const tower = towers[0]
+        motherboardUndefined = motherboard === undefined;
+        if(motherboardUndefined) {
+            motherboardExceptions.splice(0, motherboardExceptions.length);
+            continue;
+        }
 
-    const psus = await getPsus(tier === "high" ? 800 : 600, []) as psu[];
-    const psu = psus[0];
+        const chipset = await getChipset(motherboard.chipsetid) as chipset;
 
-    const cpuObj: Cpu = {
-        name: cpu.name,
-        price: cpu.price,
-        id: cpu.id,
+        const ram = pickRam(cpu, chipset, motherboard.memoryslots, motherboard.ddr5, targetRam, allRams, []);
+
+        const ssd = pickSsd(ssdStorage, cpu, allSsds, ssdExceptions);
+        const hdd = pickHdd(hddStorage, allHdds, hddExceptions);
+        const tower = pickTower(cpu, allTowers, looks, towerExceptions);
+        const psu = pickPsu(gpu, allPsus, []);
+        const fan = pickFan("120", allFans, fanExceptions);
+
+
+        towerExceptions.push(tower.id);
+
+        if (!motherboardUndefined) motherboardExceptions.push(motherboard.id);
+
+        fanExceptions.push(fan.id);
+
+        const pc: PC = {
+            cpu: cpu,
+            motherboard: motherboard,
+            cooler: cooler,
+            ram: ram,
+            gpu: gpu,
+            psu: psu,
+            ssd: ssd,
+            hdd: hddStorage === 0 ? undefined : hdd,
+            case: tower,
+            fan: tower.includedfans === 0 ? fan : undefined,
+            total: cpu.price + motherboard.price + ram.price + gpu.price + psu.price + ssd.price + tower.price + (hddStorage === 0 ? 0 : hdd.price) + (cooler === undefined ? 0 : cooler.price) + (tower.includedfans === 0 ? fan.price : 0),
+        };
+
+        console.log("--------------------------------- PC: " + i + "------------------------------------");
+        console.log(pc)
+
+        if(pc.total > budget + 100000) {
+            console.log("PC: " + i + " is too expensive");
+            cpuScore -= 2000;
+            gpuScore -= 2000;
+        }
+        if (pc.total < budget + 100000) {
+            console.log("PC: " + i + " is too cheap")
+            cpuScore += 3000;
+            gpuScore += 3000;
+            ssdExceptions.push(ssd.id);
+            hddExceptions.push(hdd.id);
+        }
+
+        pcs.push(pc)
     }
-    const motherboardObj: Motherboard = {
-        name: motherboard.name,
-        price: motherboard.price,
-        memorySlots: motherboard.memoryslots,
-        id: motherboard.id,
-    }
-    const ramObj: Ram = {
-        name: ram.name,
-        price: ram.price,
-        ddr: ram.ddr5 ? "DDR5" : "DDR4",
-        id: ram.id,
-    }
-    const gpuObj: Gpu = {
-        name: gpu.name,
-        price: gpu.price,
-        bus: gpu.bus,
-        id: gpu.id,
-    }
-    const psuObj: Psu = {
-        name: psu.name,
-        price: psu.price,
-        wattage: psu.power,
-        id: psu.id,
-    }
-    const ssdObj: Ssd = {
-        name: ssd.name,
-        price: ssd.price,
-        capacity: ssd.capacity,
-        bus: ssd.bus,
-        id: ssd.id,
-    }
-    const caseObj: Case = {
-        name: tower.name,
-        price: tower.price,
-        size: tower.size,
-        id: tower.id,
-    }
-
-    return {
-        cpu: cpuObj,
-        motherboard: motherboardObj,
-        ram: ramObj,
-        gpu: gpuObj,
-        psu: psuObj,
-        ssd: ssdObj,
-        case: caseObj,
-        fans: [],
-        total: cpu.price + motherboard.price + ram.price + gpu.price + psu.price + ssd.price + tower.price,
-    };
+    return pcs;
 }

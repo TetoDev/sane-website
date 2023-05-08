@@ -74,26 +74,26 @@
     const budget = parseInt((data.get("budget") as string).replace(/\.,/g, ""));
 
         if (selectedButton === "low") {
-            if (budget <= 400000 || budget >= 800000) {
+            if (budget < 400000 || budget > 800000) {
                 errorMessage = "Por favor, seleccione un presupuesto dentro de la gama baja (400.000 - 800.000)";
                 return;
             }
         }
         if (selectedButton === "medium") {
-            if (budget <= 800000 || budget >= 1500000) {
+            if (budget < 800000 || budget > 1500000) {
                 errorMessage = "Por favor, seleccione un presupuesto dentro de la gama media  (800.000 - 1.500.000)";
                 return;
             }
         }
         if (selectedButton === "high") {
-            if (budget <= 1500000 || budget >= 2500000) {
-                errorMessage = "Por favor, seleccione un presupuesto dentro de la gama alta (1.500.000 - 2.500.000)";
+            if (budget < 1500000 || budget > 3500000) {
+                errorMessage = "Por favor, seleccione un presupuesto dentro de la gama alta (1.500.000 - 3.500.000)";
                 return;
             }
         }
         loadingScreen = true;
 
-        const looks = data.get("looks") === "yes";
+        const looks = data.get("looksMatter");
         const size = data.get("size") as string;
         const response = await fetch(formElement.action, {
             method: "POST",
@@ -138,21 +138,21 @@
             <span>
                 <h2>Gama alta</h2>
                 <br>
-                <p>PC equipado con lo mejor de lo mejor para entusiastas y amantes del gaming. <strong>De 1.500.00$ a 2.500.000$</strong></p>
+                <p>PC equipado con lo mejor de lo mejor para entusiastas y amantes del gaming. <strong>De 1.500.00$ a 3.500.000$</strong></p>
             </span>
         </button>
     </div>
     <form on:submit|preventDefault={onFormSubmit}>
-        <label for="looks">¿Importa la estética?</label>
-        <select id="looks" name="looks-matter">
+        <label for="looksMatter">¿Importa la estética?</label>
+        <select id="looksMatter" name="looksMatter">
             <option value="yes">Si</option>
             <option value="no">No</option>
         </select>
         <label for="size">Tamaño preferido</label>
         <select name="size" id="size">
-            <option value="atx">Estándar (Recomendado)</option>
-            <option value="matx">Mediano</option>
-            <option value="mitx">Muy pequeño (Más caro)</option>
+            <option value="ATX">Estándar (Recomendado)</option>
+            <option value="Micro ATX">Mediano</option>
+            <option value="Mini ITX">Muy pequeño (Más caro)</option>
         </select>
         <label for="budget">Precio de preferencia</label>
         <input id="budget" name="budget" type="text" placeholder={pricePlaceholder}>
@@ -191,7 +191,7 @@
         border-radius: 10px;
         width: 250px;
         height: 80px;
-        font-family: "Oswald";
+        font-family: "Oswald", sans-serif;
         text-transform: uppercase;
         font-size: 30px;
         font-weight: bold;

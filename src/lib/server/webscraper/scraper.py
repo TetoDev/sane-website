@@ -21,8 +21,11 @@ def get_page(category, sorter, page):
         url = f"https://www.solotodo.cl/power_supplies?certification_start=247992&page={page}"
         
     elif category == "cooler":
-        sub_url = "types=276479" if sorter == "air" else "types=276488"
-        url = f"https://www.solotodo.cl/cpu_coolers?{sub_url}&page={page}"
+        type = sorter.split(' ')[0]
+        socket = sorter.split(" ")[1]
+        socket_url = "socket=1503117" if socket == "4" else "socket=505022" if socket == "3" else "socket=578315" if socket == "1/2" else "socket=1636542"
+        sub_url = "types=276479" if type == "air" else "types=276488"
+        url = f"https://www.solotodo.cl/cpu_coolers?{socket_url}&{sub_url}&page={page}"
         
     elif category == "tower":
         sub_url = "motherboard_formats=251395" if sorter == "mitx" else ("motherboard_formats=251385" if sorter == "matx" else "motherboard_formats=251389")
@@ -46,6 +49,7 @@ def get_page(category, sorter, page):
         
     print(f"category: {category} | sorter: {sorter} | page: {page}")
     print(f"Going to {url}")
+
     return BeautifulSoup(requests.get(url).content, "html.parser")
 
 
@@ -90,7 +94,14 @@ def get_products(category, sorter, page):
                 info.update({"ddr5": sorter == "ddr5"})
 
             if category == "cooler":
-                info.update({"type": sorter})
+                split = sorter.split(' ')
+                info.update({"type": split[0]})
+
+                if split[1] == "1/2":
+                    second_split = split[1].split('/')
+                    info.update({"sockets": [int(second_split[0]), int(second_split[1])]})
+                else:
+                    info.update({"sockets": [int(split[1])]})
 
             if category == "fan":
                 info.update({"size": sorter})
@@ -140,7 +151,7 @@ def get_products(category, sorter, page):
                     info.update({"certification": spec.replace("Certificación", '')})
                 
                 elif spec.startswith("Chipset"):
-                    info.update({"chipset": re.sub(r"\([^)]*\)|\[[^]]*\]", '', spec.replace("Chipset", '').replace("Intel", '').replace("AMD", '').replace(" ", '').lower())})
+                    info.update({"chipset": re.sub(r"\([^)]*\)|\[[^]]*\]", '', spec.replace("Chipset", '').replace("Intel", '').replace("AMD", '').replace(" ", '').replace(" MAX", '').lower())})
                 
                 elif spec.startswith("Memorias"):
                     split = spec.replace("Memorias", '').split(' ')

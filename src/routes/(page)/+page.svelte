@@ -47,7 +47,7 @@
         position: absolute;
         display: block;
         max-width: 100vw;
-        min-width: 99vw;
+        min-width: 100vw;
         height: 400px;
         transform: translateY(-92%);
         z-index: -2;

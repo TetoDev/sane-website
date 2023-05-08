@@ -9,7 +9,7 @@ categories = {"gpu": ["nvidia", "amd"],
               "ssd": ["sata", "m2sata", "m2nvme"],
               "ram": ["ddr4", "ddr5"],
               "psu": ["certified"],
-              "cooler": ["air", "water"],
+              "cooler": ["air 1/2", "air 2", "air 3", "air 4", "water 1/2", "water 2", "water 3", "water 4"],
               "tower": ["mitx", "matx", "atx"],
               "motherboard": ["1200", "1700", "am4", "am5"],
               "fan": ["120", "140"]}
@@ -17,9 +17,12 @@ categories = {"gpu": ["nvidia", "amd"],
 # Searching for products
 
 db_dump = {}
+coolers = {}
+
 for category, sorters in categories.items():
     for sorter in sorters:
-        db_dump.update({f"{category} {sorter}": []})
+        if category != "cooler":
+            db_dump.update({f"{category} {sorter}": []})
 
         page = 1
         while True:
@@ -29,8 +32,26 @@ for category, sorters in categories.items():
                 print("LAST PAGE FOUND, JUMPING TO NEXT ITEM")
                 break
 
-            db_dump.get(f"{category} {sorter}").extend(products)
+            if category == "cooler":
+                cooler_names = coolers.keys()
+                for cooler in products:
+                    name = cooler.get("name")
+                    info = cooler.get("info")
+                    if name in cooler_names:
+                        sockets = info.get("sockets")
+                        stored_cooler = coolers.get(name)
+                        stored_sockets = stored_cooler.get("info").get("sockets")
+                        for socket in sockets:
+                            if socket not in stored_sockets:
+                                stored_sockets.append(socket)
+                    else:
+                        coolers.update({cooler.get("name"): cooler})
+            else:
+                db_dump.get(f"{category} {sorter}").extend(products)
+
             page = page + 1
+
+db_dump.update({"cooler all": coolers.values()})
 
 # Scrape cpu/gpu rankings
 print("Scraping rankings...")
@@ -48,8 +69,9 @@ for component, ranking in rankings.items():
                     for product in value:
                         if product.get("score") != 0:
                             continue
-                        ranking_name = item_name.replace(" ", "").lower()
+                        ranking_name = item_name.replace(" ", "").replace("-", "").lower()
                         product_name = product.get("name").replace(" ", "").lower()
+
                         if ranking_name in product_name:
                             if ("super" in product_name and "super" not in ranking_name) or (
                                     "ti" in product_name and "ti" not in ranking_name):
@@ -105,11 +127,9 @@ print("Connected to Postgresql successfully!")
 print("Updating database status: Updating")
 db.update_status("updating")
 
-try:
-    # db_init()
-    db_update()
-except:
-    db.disconnect()
+
+# db_init()
+db_update()
 
 # Updating the status to operational
 print("Updating database status: Operational")

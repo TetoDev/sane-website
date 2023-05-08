@@ -43,13 +43,13 @@ class Connection:
             "fan":
                 "INSERT INTO fan (name, price, size, link) VALUES (%s, %s, %s, %s)",
             "game":
-                "INSERT INTO game (name, reqcpuid, reqgpuid, reqram, storage, imglink) VALUES (%s, %s, %s, %s, %s, %s)",
+                "INSERT INTO game (name, cpuscore, gpuscore, reqram, storage, imglink) VALUES (%s, %s, %s, %s, %s, %s)",
             "cpu_ranking":
                 "INSERT INTO cpu_ranking (score, name) VALUES (%s, %s)",
             "gpu_ranking":
                 "INSERT INTO gpu_ranking (score, name) VALUES (%s, %s)",
             "cooler":
-                "INSERT INTO cooler (name, price, type, size, link) VALUES (%s, %s, %s, %s, %s)",
+                "INSERT INTO cooler (name, price, type, size, link, socketids) VALUES (%s, %s, %s, %s, %s, %s)",
         }
 
     def is_operational(self):
@@ -149,7 +149,7 @@ class Connection:
 
         elif entry_type == "game":
             for entry in entries:
-                inputs.append((entry.get("name"), entry.get("cpu_id"), entry.get("gpu_id"), entry.get("recommended_ram"), entry.get("storage"), entry.get("img")))
+                inputs.append((entry.get("name"), entry.get("cpuscore"), entry.get("gpuscore"), entry.get("recommended_ram"), entry.get("storage"), entry.get("img")))
 
         elif entry_type == "cpu_ranking":
             for entry in entries:
@@ -162,7 +162,7 @@ class Connection:
         elif entry_type == "cooler":
             for entry in entries:
                 info = entry.get("info")
-                inputs.append((entry.get("name"), entry.get("price"), info.get("type"), info.get("size"), entry.get("link")))
+                inputs.append((entry.get("name"), entry.get("price"), info.get("type"), info.get("size"), entry.get("link"), info.get("sockets")))
 
         self.write_to_database(entry_type, inputs)
         self.connection.commit()
