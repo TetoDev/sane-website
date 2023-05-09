@@ -1,5 +1,7 @@
 <script lang="ts">
     import Loadingscreen from "../../../loadingscreen.svelte";
+    import {pcStore} from "../../pcstore";
+    import {goto} from "$app/navigation";
 
     let selectedButton = "";
     let errorMessage = "";
@@ -23,7 +25,7 @@
                 highButton.style.backgroundColor = "white";
                 highButton.style.color = "black";
                 break;
-            case "medium":
+            case "mid":
             pricePlaceholder = "Presupuesto: de 800.000$ a 1.500.000$";
                 mediumButton.style.backgroundColor = "var(--dpurple)";
                 mediumButton.style.color = "white";
@@ -79,7 +81,7 @@
                 return;
             }
         }
-        if (selectedButton === "medium") {
+        if (selectedButton === "mid") {
             if (budget < 800000 || budget > 1500000) {
                 errorMessage = "Por favor, seleccione un presupuesto dentro de la gama media  (800.000 - 1.500.000)";
                 return;
@@ -107,8 +109,11 @@
                 "Content-Type": "application/json"
             }
         });
+        loadingScreen = false;
 
-        console.log("Response: ", response);
+        pcStore.set((await response.json()).pcs);
+
+        await goto("/build/checkout")
     }
 </script>
 
@@ -125,7 +130,7 @@
                 <p>PC de calidad con todo lo necesario para jugar al menor precio posible. <strong>De 400.000$ a 800.000$</strong></p>
             </span>
         </button>
-        <button bind:this={mediumButton} on:click|preventDefault={() => {selectButton("medium")}}>
+        <button bind:this={mediumButton} on:click|preventDefault={() => {selectButton("mid")}}>
             <img src="" alt="IMG">
             <span>
                 <h2>Gama media</h2>

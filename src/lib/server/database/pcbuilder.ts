@@ -103,7 +103,17 @@ export async function getPCs(targetCpu: number, targetGpu: number, targetRam: nu
             hdd: hddStorage === 0 ? undefined : hdd,
             case: tower,
             fan: tower.includedfans === 0 ? fan : undefined,
-            total: cpu.price + motherboard.price + ram.price + gpu.price + psu.price + ssd.price + tower.price + (hddStorage === 0 ? 0 : hdd.price) + (cooler === undefined ? 0 : cooler.price) + (tower.includedfans === 0 ? fan.price : 0),
+            total: cpu.price
+                + motherboard.price
+                + ram.price
+                + gpu.price
+                + psu.price
+                + ssd.price
+                + tower.price
+                + (hddStorage === 0 ? 0 : hdd.price)
+                + (cooler === undefined ? 0 : cooler.price)
+                + (tower.includedfans === 0 ? fan.price : 0)
+                + 100000, // CHANGE
         };
 
         console.log("--------------------------------- PC: " + i + "------------------------------------");

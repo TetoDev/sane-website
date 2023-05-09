@@ -1,5 +1,8 @@
 <script lang="ts">
     import Game from './game.svelte'
+    import Loadingscreen from '../../../loadingscreen.svelte'
+    import {goto} from "$app/navigation";
+    import {pcStore} from "../../pcstore";
 
     export let data;
     const games = data.post;
@@ -19,6 +22,8 @@
         {title: "Omega", value: 5},
     ]
 
+    let loading: boolean = false;
+
     async function submit(){
         const selectedGames = games.filter(game => game.selected);
         const selectedGamesIds = selectedGames.map(game => game.id);
@@ -31,8 +36,18 @@
             error = 'Selecciona un tier válido';
             return;
         }
+        if (budget < 300000) {
+            error = 'Selecciona un presupuesto válido. Arriba de $300.000';
+            return;
+        }
+        if (!['ATX', 'Micro ATX'].includes(size)) {
+            error = 'Selecciona un tamaño de gabinete válido';
+            return;
+        }
 
         error = ''
+
+        loading = true;
 
         const response = await fetch('/build/mode/games', {
             method: 'POST',
@@ -48,7 +63,10 @@
             })
         });
 
-        console.log(response)
+        pcStore.set((await response.json()).pcs)
+        loading = false;
+
+        await goto('/build/checkout')
     }
 
 </script>
@@ -57,7 +75,7 @@
     <p id="desc">Primero selecciona los juegos que quieras jugar en tu futura PC, luego el rendimiento que quieras en los juegos seleccionados, y finalmente tu presupuesto ideal!</p>
     {#each games as game}
         <button class="game-button {game.selected ? 'selected' : ''}" on:click={() => game.selected = !game.selected}>
-            <Game  title={game.title} imgUrl={game.imgUrl} selected={game.selected ? "1" : "0"}></Game>
+            <Game title={game.title} imgUrl={game.imgUrl} selected={game.selected ? "1" : "0"}></Game>
         </button>
     {/each}
     <div class="bottom-wrapper">
@@ -74,7 +92,7 @@
             {/each}
             <span>
                 <h2>PRESUPUESTO:</h2>
-                <input type="number" bind:value={budget}>
+                <input id="budget" type="number" bind:value={budget}>
             </span>
             <span>
                 <h2>GABINETE:</h2>
@@ -82,6 +100,7 @@
                     Importa la estética (RGB, Panel transparente)?
                     <input type="checkbox" bind:checked={rgb}>
                 </label>
+                <br>
                 <label>
                     Que tamaño de gabinete quiere?
                     <select name="size" id="size" bind:value={size}>
@@ -97,10 +116,32 @@
         <p class="error">{error}</p>
     {/if}
 </div>
+{#if loading}
+    <Loadingscreen text="Generando PCs"></Loadingscreen>
+{/if}
 
 <style>
+    #budget {
+        width: 100%;
+        height: 2em;
+        border-radius: 10px;
+        border: none;
+        background-color: var(--mgray);
+        color: white;
+        font-size: 1.5em;
+        text-align: center;
+        margin-bottom: 1em;
+    }
+
     span {
         margin: 0 2em;
+        text-align: center;
+        border-style: solid;
+        border-width: 2px;
+        border-color: var(--eblue);
+        padding: 1em 2em;
+        border-radius: 30px;
+        background-color: var(--dpurple);
     }
 
 
@@ -139,6 +180,7 @@
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
+        margin-bottom: 2em;
     }
 
     .tier-option {

@@ -14,6 +14,9 @@ export const POST: RequestHandler = async ({ request }) => {
     const requestData = await request.json();
     const tier = requestData.tier as number;
     const gameIds = requestData.games as number[];
+    const rgb = requestData.rgb as boolean;
+    const budget = requestData.budget as number;
+    const size = requestData.size as string;
 
     const data: Data = {
         success: false,
@@ -43,7 +46,9 @@ export const POST: RequestHandler = async ({ request }) => {
     const ssdStorage = 500;
     const hddStorage = 1000;
 
-    data.pcs = await getPCs(targetCpu, targetGpu, targetRam, ssdStorage, hddStorage, "ATX", 1000000, true, 1);
+    data.pcs = await getPCs(targetCpu, targetGpu, targetRam, ssdStorage, hddStorage, size, budget, true, 5);
+
+    data.success = true;
 
     return new Response(JSON.stringify(data),{"status": 200,"headers":{"content-type":"application/json"}});
 }
