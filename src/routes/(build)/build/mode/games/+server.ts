@@ -46,7 +46,7 @@ export const POST: RequestHandler = async ({ request }) => {
     const ssdStorage = 500;
     const hddStorage = 1000;
 
-    data.pcs = await getPCs(targetCpu, targetGpu, targetRam, ssdStorage, hddStorage, size, budget, true, 5);
+    data.pcs = await getPCs(targetCpu, targetGpu, targetRam, ssdStorage, hddStorage, size, budget, rgb, 5);
 
     data.success = true;
 
