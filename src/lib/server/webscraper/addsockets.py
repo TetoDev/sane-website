@@ -7,18 +7,21 @@ conn.update_status("updating")
 
 class Socket:
 
-    def __init__(self, name: str, chipsets: []):
+    def __init__(self, name: str):
         self.name = name
-        self.chipsets = chipsets
         socket_documents.append(self.to_dict())
 
     def to_dict(self):
         return {
             "name": self.name,
-            "chipsets": self.chipsets,
             }
 
-lga1700 = Socket("1700", ["LGA1700"])
-lga1200 = Socket("1200", ["LGA1200"])
-am4 = Socket("AM4", ["AM4"])
-am5 = Socket("AM5", ["AM5"])
+nosocket = Socket("DEFAULT")
+lga1200 = Socket("1200")
+lga1700 = Socket("1700")
+am4 = Socket("AM4")
+am5 = Socket("AM5")
+
+conn.add_entries(socket_documents,"socket")
+
+conn.update_status("operational")

@@ -50,6 +50,8 @@ class Connection:
                 "INSERT INTO gpu_ranking (score, name) VALUES (%s, %s)",
             "cooler":
                 "INSERT INTO cooler (name, price, type, size, link, socketids) VALUES (%s, %s, %s, %s, %s, %s)",
+            "chipset":
+                "INSERT INTO chipset (name, brand)" ### WORK ON THIS
         }
 
     def is_operational(self):
