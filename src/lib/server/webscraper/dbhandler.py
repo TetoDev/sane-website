@@ -51,7 +51,9 @@ class Connection:
             "cooler":
                 "INSERT INTO cooler (name, price, type, size, link, socketids) VALUES (%s, %s, %s, %s, %s, %s)",
             "chipset":
-                "INSERT INTO chipset (name, brand)" ### WORK ON THIS
+                "INSERT INTO chipset (name, brand, supportedgenerations, ddr4, ddr5, score, socketid) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+            "socket":
+                "INSERT INTO socket (name) VALUES (%s)",
         }
 
     def is_operational(self):
@@ -165,6 +167,12 @@ class Connection:
             for entry in entries:
                 info = entry.get("info")
                 inputs.append((entry.get("name"), entry.get("price"), info.get("type"), info.get("size"), entry.get("link"), info.get("sockets")))
+        elif entry_type == "chipset":
+            for entry in entries:
+                inputs.append((entry.get("name"), entry.get("brand"), entry.get("supportedgenerations"), entry.get("ddr4"), entry.get("ddr5"), entry.get("score"), entry.get("socketid")))
+        elif entry_type == "socket":
+            for entry in entries:
+                inputs.append((entry.get("name"),))
 
         self.write_to_database(entry_type, inputs)
         self.connection.commit()
