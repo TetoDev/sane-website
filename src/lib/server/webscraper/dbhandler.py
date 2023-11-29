@@ -105,7 +105,7 @@ class Connection:
         if entry_type == "cpu":
             for entry in entries:
                 info = entry.get("info")
-                socket_id = self.socket_ids.get(info.get("socket").upper()) if self.socket_ids.get(info.get("socket").upper()) is not None else 0
+                socket_id = self.socket_ids.get(info.get("socket")) if self.socket_ids.get(info.get("socket")) is not None else 0
                 inputs.append((entry.get("name"), entry.get("price"), socket_id, entry.get("score"), info.get("generation"), entry.get("link")))
 
         elif entry_type == "gpu":

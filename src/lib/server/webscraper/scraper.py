@@ -151,7 +151,7 @@ def get_products(category, sorter, page):
                     info.update({"certification": spec.replace("Certificación", '')})
                 
                 elif spec.startswith("Chipset"):
-                    info.update({"chipset": re.sub(r"\([^)]*\)|\[[^]]*\]", '', spec.replace("Chipset", '').replace("Intel", '').replace("AMD", '').replace(" ", '').replace(" MAX", '').lower())})
+                    info.update({"chipset": re.sub(r"\([^)]*\)|\[[^]]*\]", '', spec.replace("Chipset", '').replace("Intel", '').replace("AMD", '').replace(" ", '').replace(" MAX", '').upper())})
                 
                 elif spec.startswith("Memorias"):
                     split = spec.replace("Memorias", '').split(' ')
